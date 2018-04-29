@@ -17,6 +17,7 @@
 
 package com.cmgapps.lint;
 
+import com.android.tools.lint.detector.api.ApiKt;
 import com.android.tools.lint.detector.api.Issue;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,5 +29,10 @@ public class IssueRegistry extends com.android.tools.lint.client.api.IssueRegist
     @Override
     public List<Issue> getIssues() {
         return Collections.singletonList(NullifyAnnotationDetector.ISSUE);
+    }
+
+    @Override
+    public int getApi() {
+        return ApiKt.CURRENT_API;
     }
 }
