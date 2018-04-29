@@ -105,7 +105,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         @Override
         public void visitField(@NonNull UField field) {
-            if (isPrimitive(field.getTypeElement()) || isEnumConstant(field)) {
+            if (isPrimitive(field.getTypeElement()) || isEnumConstant(field) || isConstant(field)) {
                 return;
             }
 
@@ -164,6 +164,10 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         private boolean isEnumConstant(UField field) {
             return field instanceof UEnumConstant;
+        }
+
+        private boolean isConstant(UField field) {
+            return field.isStatic() && field.isFinal();
         }
     }
 }

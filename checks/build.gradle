@@ -18,7 +18,7 @@
 apply plugin: 'java-library'
 
 group = 'com.cmgapps.android'
-version = '0.1'
+version = '0.2-SNAPSHOT'
 
 def lintVersion = '26.1.2'
 
