@@ -17,6 +17,9 @@
 
 apply plugin: 'java-library'
 
+group = 'com.cmgapps.android'
+version = '0.1'
+
 def lintVersion = '26.1.2'
 
 dependencies {
@@ -33,8 +36,8 @@ targetCompatibility = "1.8"
 
 jar {
     manifest {
-        // Only use the "-v2" key here if your checks have been updated to the
-        // new 3.0 APIs (including UAST)
         attributes("Lint-Registry-v2": "com.cmgapps.lint.IssueRegistry")
     }
 }
+
+apply from: 'deploy.gradle'

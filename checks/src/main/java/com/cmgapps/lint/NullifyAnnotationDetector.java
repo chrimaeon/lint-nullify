@@ -20,11 +20,21 @@ package com.cmgapps.lint;
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.tools.lint.client.api.UElementHandler;
-import com.android.tools.lint.detector.api.*;
-import com.intellij.psi.PsiModifierList;
+import com.android.tools.lint.detector.api.Category;
+import com.android.tools.lint.detector.api.Detector;
+import com.android.tools.lint.detector.api.Implementation;
+import com.android.tools.lint.detector.api.Issue;
+import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.Scope;
+import com.android.tools.lint.detector.api.Severity;
+import com.android.tools.lint.detector.api.SourceCodeScanner;
 import com.intellij.psi.PsiTypeElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.uast.*;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UEnumConstant;
+import org.jetbrains.uast.UField;
+import org.jetbrains.uast.UMethod;
+import org.jetbrains.uast.UParameter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,13 +91,12 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         @Override
         public void visitField(@NonNull UField field) {
-            PsiModifierList modifierList = field.getModifierList();
-            if (modifierList == null || isPrimitive(field.getTypeElement()) || isEnumConstant(field)) {
+            if (isPrimitive(field.getTypeElement()) || isEnumConstant(field)) {
                 return;
             }
 
-            boolean hasNullifyAnnotaion = modifierList.findAnnotation(ANNOTATION_NON_NULL) != null ||
-                modifierList.findAnnotation(ANNOTATION_NULLABLE) != null;
+            boolean hasNullifyAnnotaion = field.findAnnotation(ANNOTATION_NON_NULL) != null ||
+                field.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
                 mContext.report(ISSUE, field, mContext.getLocation(field), MISSING_ANNOTATION);
@@ -113,9 +122,8 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
             }
 
-            PsiModifierList modifierList = method.getModifierList();
-            boolean hasNullifyAnnotaion = modifierList.findAnnotation(ANNOTATION_NON_NULL) != null ||
-                modifierList.findAnnotation(ANNOTATION_NULLABLE) != null;
+            boolean hasNullifyAnnotaion = method.findAnnotation(ANNOTATION_NON_NULL) != null ||
+                method.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
                 mContext.report(ISSUE, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION);
@@ -123,13 +131,12 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         }
 
         private void handleParameter(UParameter parameter) {
-            PsiModifierList modifierList = parameter.getModifierList();
-            if (modifierList == null || isPrimitive(parameter.getTypeElement())) {
+            if (isPrimitive(parameter.getTypeElement())) {
                 return;
             }
 
-            boolean hasNullifyAnnotaion = modifierList.findAnnotation(ANNOTATION_NON_NULL) != null ||
-                modifierList.findAnnotation(ANNOTATION_NULLABLE) != null;
+            boolean hasNullifyAnnotaion = parameter.findAnnotation(ANNOTATION_NON_NULL) != null ||
+                parameter.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
                 mContext.report(ISSUE, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION);
