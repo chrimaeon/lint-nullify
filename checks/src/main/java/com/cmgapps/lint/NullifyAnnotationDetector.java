@@ -54,7 +54,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         // `monospace`, *italic*, and **bold**.
         "Checks for missing `@NonNull/@Nullable` Annotations",
         Category.CORRECTNESS,
-        6,
+        4,
         Severity.WARNING,
         new Implementation(
             NullifyAnnotationDetector.class,
@@ -77,19 +77,6 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
     @Override
     public UElementHandler createUastHandler(JavaContext context) {
         return new NullifyAnnotationHandler(context);
-    }
-
-    private LintFix quickFixAnnotation(UElement element) {
-        String sourceString = element.asSourceString();
-        System.out.println(sourceString);
-        String nonNullFixString = "@NonNull " + sourceString;
-        String nullableFixString = "@Nullable " + sourceString;
-
-        LintFix.GroupBuilder group = fix().group();
-        group.add(fix().name("Add @NonNull").replace().text(sourceString).shortenNames().reformat(true).with(nonNullFixString).build());
-        group.add(fix().name("Add @Nullable").replace().text(sourceString).shortenNames().reformat(true).with(nullableFixString).build());
-
-        return group.build();
     }
 
     private class NullifyAnnotationHandler extends UElementHandler {
@@ -168,6 +155,18 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         private boolean isConstant(UField field) {
             return field.isStatic() && field.isFinal();
+        }
+
+        private LintFix quickFixAnnotation(UElement element) {
+            String sourceString = element.asSourceString();
+            String nonNullFixString = "@NonNull " + sourceString;
+            String nullableFixString = "@Nullable " + sourceString;
+
+            LintFix.GroupBuilder group = fix().group();
+            group.add(fix().name("Add @NonNull").replace().text(sourceString).shortenNames().reformat(true).with(nonNullFixString).build());
+            group.add(fix().name("Add @Nullable").replace().text(sourceString).shortenNames().reformat(true).with(nullableFixString).build());
+
+            return group.build();
         }
     }
 }

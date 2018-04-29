@@ -66,6 +66,7 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
                     "public class Test {\n" +
                     "   private String myString;\n" +
                     "   private int myInt;\n" +
+                    "   private static final String constString = \"Test\";\n" +
                     "}"
             ))
             .run()
@@ -90,6 +91,7 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
                     "public class Test {\n" +
                     "   @android.support.annotation.NonNull private String myString;\n" +
                     "   private int myInt;\n" +
+                    "   private static final String constString = \"Test\";\n" +
                     "}"
             )).run().expect("No warnings.");
     }
