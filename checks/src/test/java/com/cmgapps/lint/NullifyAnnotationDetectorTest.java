@@ -33,10 +33,20 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
                     "public class Test {\n" +
                     "   public Test(int myInt, String myString){}\n" +
                     "}"
-            )).run().expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
-            "   public Test(int myInt, String myString){}\n" +
-            "                          ~~~~~~~~~~~~~~~\n" +
-            "0 errors, 1 warnings");
+            ))
+            .run()
+            .expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
+                "   public Test(int myInt, String myString){}\n" +
+                "                          ~~~~~~~~~~~~~~~\n" +
+                "0 errors, 1 warnings")
+            .expectFixDiffs("Fix for src/test/pkg/Test.java line 2: Add @NonNull:\n" +
+                "@@ -3 +3\n" +
+                "-    public Test(int myInt, String myString){}\n" +
+                "+    public Test(int myInt, @NonNull String myString){}\n" +
+                "Fix for src/test/pkg/Test.java line 2: Add @Nullable:\n" +
+                "@@ -3 +3\n" +
+                "-    public Test(int myInt, String myString){}\n" +
+                "+    public Test(int myInt, @Nullable String myString){}");
     }
 
     public void testConstructorParameterAnnotation() {
@@ -57,10 +67,20 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
                     "   private String myString;\n" +
                     "   private int myInt;\n" +
                     "}"
-            )).run().expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
-            "   private String myString;\n" +
-            "   ~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-            "0 errors, 1 warnings");
+            ))
+            .run()
+            .expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
+                "   private String myString;\n" +
+                "   ~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                "0 errors, 1 warnings")
+            .expectFixDiffs("Fix for src/test/pkg/Test.java line 2: Add @NonNull:\n" +
+                "@@ -3 +3\n" +
+                "-    private String myString;\n" +
+                "+    @NonNull private String myString;\n" +
+                "Fix for src/test/pkg/Test.java line 2: Add @Nullable:\n" +
+                "@@ -3 +3\n" +
+                "-    private String myString;\n" +
+                "+    @Nullable private String myString;");
     }
 
     public void testFieldAnnotation() {
@@ -75,15 +95,26 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
     }
 
     public void testMissingMethodAnnotation() {
-        lint().files(java(
-            "package test.pkg;\n" +
-                "public class Test {\n" +
+        lint().files(
+            java(
+                "package test.pkg;\n" +
+                    "public class Test {\n" +
+                    "   public void foo(int myInt, String myString){};\n" +
+                    "}"
+            ))
+            .run()
+            .expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
                 "   public void foo(int myInt, String myString){};\n" +
-                "}"
-        )).run().expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
-            "   public void foo(int myInt, String myString){};\n" +
-            "                              ~~~~~~~~~~~~~~~\n" +
-            "0 errors, 1 warnings");
+                "                              ~~~~~~~~~~~~~~~\n" +
+                "0 errors, 1 warnings")
+            .expectFixDiffs("Fix for src/test/pkg/Test.java line 2: Add @NonNull:\n" +
+                "@@ -3 +3\n" +
+                "-    public void foo(int myInt, String myString){};\n" +
+                "+    public void foo(int myInt, @NonNull String myString){};\n" +
+                "Fix for src/test/pkg/Test.java line 2: Add @Nullable:\n" +
+                "@@ -3 +3\n" +
+                "-    public void foo(int myInt, String myString){};\n" +
+                "+    public void foo(int myInt, @Nullable String myString){};");
     }
 
     public void testMethodAnnotation() {
@@ -96,15 +127,26 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
     }
 
     public void testMethodArrayMissingAnnotation() {
-        lint().files(java(
-            "package test.pkg;\n" +
-                "public class Test {\n" +
+        lint().files(
+            java(
+                "package test.pkg;\n" +
+                    "public class Test {\n" +
+                    "   public void foo(int[] myInt, String[] myString){};\n" +
+                    "}"
+            ))
+            .run()
+            .expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
                 "   public void foo(int[] myInt, String[] myString){};\n" +
-                "}"
-        )).run().expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
-            "   public void foo(int[] myInt, String[] myString){};\n" +
-            "                                ~~~~~~~~~~~~~~~~~\n" +
-            "0 errors, 1 warnings");
+                "                                ~~~~~~~~~~~~~~~~~\n" +
+                "0 errors, 1 warnings")
+            .expectFixDiffs("Fix for src/test/pkg/Test.java line 2: Add @NonNull:\n" +
+                "@@ -3 +3\n" +
+                "-    public void foo(int[] myInt, String[] myString){};\n" +
+                "+    public void foo(int[] myInt, @NonNull String[] myString){};\n" +
+                "Fix for src/test/pkg/Test.java line 2: Add @Nullable:\n" +
+                "@@ -3 +3\n" +
+                "-    public void foo(int[] myInt, String[] myString){};\n" +
+                "+    public void foo(int[] myInt, @Nullable String[] myString){};");
     }
 
     public void testMethodArrayAnnotation() {
@@ -117,16 +159,27 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
     }
 
     public void testMissingReturnAnnotation() {
-        lint().files(java(
-            "package test.pkg;\n" +
-                "public class Test {\n" +
-                "   public int foo(){};\n" +
+        lint().files(
+            java(
+                "package test.pkg;\n" +
+                    "public class Test {\n" +
+                    "   public int foo(){};\n" +
+                    "   public String foo(){};\n" +
+                    "}"
+            ))
+            .run()
+            .expect("src/test/pkg/Test.java:4: Warning: Return type is missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
                 "   public String foo(){};\n" +
-                "}"
-        )).run().expect("src/test/pkg/Test.java:4: Warning: Return type is missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
-            "   public String foo(){};\n" +
-            "   ~~~~~~~~~~~~~~~~~~~~~\n" +
-            "0 errors, 1 warnings");
+                "   ~~~~~~~~~~~~~~~~~~~~~\n" +
+                "0 errors, 1 warnings")
+            .expectFixDiffs("Fix for src/test/pkg/Test.java line 3: Add @NonNull:\n" +
+                "@@ -4 +4\n" +
+                "-    public String foo(){};\n" +
+                "+    @NonNull public String foo(){};\n" +
+                "Fix for src/test/pkg/Test.java line 3: Add @Nullable:\n" +
+                "@@ -4 +4\n" +
+                "-    public String foo(){};\n" +
+                "+    @Nullable public String foo(){};");
     }
 
     public void testReturnAnnotation() {

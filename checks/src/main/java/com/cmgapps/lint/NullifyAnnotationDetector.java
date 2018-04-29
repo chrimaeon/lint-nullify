@@ -25,6 +25,7 @@ import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.LintFix;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 import com.android.tools.lint.detector.api.SourceCodeScanner;
@@ -51,7 +52,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         // Full explanation of the issue; you can use some markdown markup such as
         // `monospace`, *italic*, and **bold**.
-        "Checks for missing `@NonNull/@Nullable Annotations",
+        "Checks for missing `@NonNull/@Nullable` Annotations",
         Category.CORRECTNESS,
         6,
         Severity.WARNING,
@@ -78,6 +79,19 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         return new NullifyAnnotationHandler(context);
     }
 
+    private LintFix quickFixAnnotation(UElement element) {
+        String sourceString = element.asSourceString();
+        System.out.println(sourceString);
+        String nonNullFixString = "@NonNull " + sourceString;
+        String nullableFixString = "@Nullable " + sourceString;
+
+        LintFix.GroupBuilder group = fix().group();
+        group.add(fix().name("Add @NonNull").replace().text(sourceString).shortenNames().reformat(true).with(nonNullFixString).build());
+        group.add(fix().name("Add @Nullable").replace().text(sourceString).shortenNames().reformat(true).with(nullableFixString).build());
+
+        return group.build();
+    }
+
     private class NullifyAnnotationHandler extends UElementHandler {
 
         private static final String MISSING_ANNOTATION = "Missing @NonNull or @Nullable";
@@ -99,7 +113,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 field.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
-                mContext.report(ISSUE, field, mContext.getLocation(field), MISSING_ANNOTATION);
+                mContext.report(ISSUE, field, mContext.getLocation(field), MISSING_ANNOTATION, quickFixAnnotation(field));
             }
         }
 
@@ -126,7 +140,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 method.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
-                mContext.report(ISSUE, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION);
+                mContext.report(ISSUE, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
             }
         }
 
@@ -139,7 +153,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 parameter.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
-                mContext.report(ISSUE, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION);
+                mContext.report(ISSUE, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION, quickFixAnnotation(parameter));
             }
         }
 
