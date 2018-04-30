@@ -92,7 +92,8 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         @Override
         public void visitField(@NonNull UField field) {
-            if (isPrimitive(field.getTypeElement()) || isEnumConstant(field) || isConstant(field)) {
+
+            if (isPrimitive(field.getTypeElement()) || isEnumConstant(field) || isConstant(field) || isInitializedFinalField(field)) {
                 return;
             }
 
@@ -103,7 +104,6 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 mContext.report(ISSUE, field, mContext.getLocation(field), MISSING_ANNOTATION, quickFixAnnotation(field));
             }
         }
-
 
         @Override
         public void visitMethod(@NonNull UMethod method) {
@@ -167,6 +167,10 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
             group.add(fix().name("Add @Nullable").replace().text(sourceString).shortenNames().reformat(true).with(nullableFixString).build());
 
             return group.build();
+        }
+
+        private boolean isInitializedFinalField(UField field) {
+            return field.isFinal() && field.asSourceString().indexOf('=') > -1;
         }
     }
 }

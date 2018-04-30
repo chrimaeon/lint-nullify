@@ -15,7 +15,6 @@
  *
  */
 apply plugin: "com.jfrog.bintray"
-apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 
@@ -46,7 +45,7 @@ publishing {
         BintrayPublication(MavenPublication) {
             from components.java
             artifact sourcesJar
-            artifact javadocsJar
+            artifact javadocJar
             groupId group
             artifactId 'checks'
             version project.version
@@ -79,16 +78,12 @@ bintray {
     }
 }
 
-task sourcesJar(type: Jar) {
+task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
-    from sourceSets.main.java.srcDirs
+    from sourceSets.main.allSource
 }
 
-task javadocs(type: Javadoc) {
-    source = sourceSets.main.java.srcDirs
-}
-
-task javadocsJar(type: Jar, dependsOn: javadocs) {
+task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
-    from javadocs.destinationDir
+    from javadoc.destinationDir
 }
