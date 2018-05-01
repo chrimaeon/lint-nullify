@@ -216,6 +216,15 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
         )).run().expect("No warnings.");
     }
 
+    public void testAnnotationDefinition() {
+        lint().files(java(
+            "package test.pkg;\n" +
+                "public @interface Test {\n" +
+                "   String value();\n" +
+                "}"
+        )).run().expect("No warnings.");
+    }
+
     @Override
     protected Detector getDetector() {
         return new NullifyAnnotationDetector();

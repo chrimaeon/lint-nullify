@@ -31,6 +31,7 @@ import com.android.tools.lint.detector.api.Severity;
 import com.android.tools.lint.detector.api.SourceCodeScanner;
 import com.intellij.psi.PsiTypeElement;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.uast.UAnnotationMethod;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UEnumConstant;
 import org.jetbrains.uast.UField;
@@ -107,6 +108,10 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         @Override
         public void visitMethod(@NonNull UMethod method) {
+            if (method instanceof UAnnotationMethod) {
+                return;
+            }
+
             handleMethodsParameterList(method.getUastParameters());
             handleMethodReturnType(method);
         }
