@@ -17,10 +17,12 @@
 apply plugin: "com.jfrog.bintray"
 apply plugin: 'maven-publish'
 
-
 def scmUrl = 'https://github.com/chrimaeon/lint-nullify'
 
 def pomConfig = {
+    name 'Android Nullify Lint Checks'
+    description 'Lint checks for @Nullable/@NonNull'
+    url scmUrl
     licenses {
         license {
             name 'The Apache Software License, Version 2.0'
