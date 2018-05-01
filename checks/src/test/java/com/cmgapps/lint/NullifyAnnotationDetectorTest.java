@@ -195,6 +195,27 @@ public class NullifyAnnotationDetectorTest extends LintDetectorTest {
         )).run().expect("No warnings.");
     }
 
+    public void testUninitializedFinalField() {
+        lint().files(java(
+            "package test.pkg;\n" +
+                "public class Test {\n" +
+                "   public final Foo foo;\n" +
+                "}"
+        )).run().expect("src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyAnnotation]\n" +
+            "   public final Foo foo;\n" +
+            "   ~~~~~~~~~~~~~~~~~~~~~\n" +
+            "0 errors, 1 warnings");
+    }
+
+    public void testInitializedFinalField() {
+        lint().files(java(
+            "package test.pkg;\n" +
+                "public class Test {\n" +
+                "   public final Foo foo = new Foo();\n" +
+                "}"
+        )).run().expect("No warnings.");
+    }
+
     @Override
     protected Detector getDetector() {
         return new NullifyAnnotationDetector();
