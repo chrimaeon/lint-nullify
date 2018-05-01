@@ -17,7 +17,6 @@
 apply plugin: "com.jfrog.bintray"
 apply plugin: 'maven-publish'
 
-
 def scmUrl = 'https://github.com/chrimaeon/lint-nullify'
 
 def pomConfig = {
