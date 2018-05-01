@@ -42,7 +42,7 @@ def pomConfig = {
 
 publishing {
     publications {
-        BintrayPublication(MavenPublication) {
+        bintray(MavenPublication) {
             from components.java
             artifact sourcesJar
             artifact javadocJar
@@ -63,7 +63,7 @@ bintray {
     credentialProps.load(new FileInputStream(file("${project.rootDir}/credentials.properties")))
     user = credentialProps.user
     key = credentialProps.key
-    publications = ['BintrayPublication']
+    publications = ['bintray']
     pkg {
         repo = 'maven'
         name = "${project.group}:checks"
