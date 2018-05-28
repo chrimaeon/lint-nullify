@@ -43,23 +43,42 @@ import java.util.List;
 
 public class NullifyAnnotationDetector extends Detector implements SourceCodeScanner {
 
-    @SuppressWarnings("WeakerAccess")
-    public static final Issue ISSUE = Issue.create(
-        "MissingNullifyAnnotation",
+    private static final Issue ISSUE_MEDHOD = Issue.create(
+        "MissingNullifyMethodAnnotation",
 
         // Title -- shown in the IDE's preference dialog, as category headers in the
         // Analysis results window, etc
-        "Nullable/NonNull check",
+        "Nullable/NonNull method parameter/return type check",
 
         // Full explanation of the issue; you can use some markdown markup such as
         // `monospace`, *italic*, and **bold**.
-        "Checks for missing `@NonNull/@Nullable` Annotations",
+        "Checks for missing `@NonNull/@Nullable` Annotations for method paramters and return types",
         Category.CORRECTNESS,
         4,
         Severity.WARNING,
         new Implementation(
             NullifyAnnotationDetector.class,
             Scope.JAVA_FILE_SCOPE));
+
+    @SuppressWarnings("WeakerAccess")
+    private static final Issue ISSUE_FIELD = Issue.create(
+        "MissingNullifyFieldAnnotation",
+
+        // Title -- shown in the IDE's preference dialog, as category headers in the
+        // Analysis results window, etc
+        "Nullable/NonNull field check",
+
+        // Full explanation of the issue; you can use some markdown markup such as
+        // `monospace`, *italic*, and **bold**.
+        "Checks for missing `@NonNull/@Nullable` Annotations for fields",
+        Category.CORRECTNESS,
+        4,
+        Severity.WARNING,
+        new Implementation(
+            NullifyAnnotationDetector.class,
+            Scope.JAVA_FILE_SCOPE));
+
+
     @NonNull
     private static final String ANNOTATION_NON_NULL = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX
         + "NonNull";
@@ -67,6 +86,10 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
     @NonNull
     private static final String ANNOTATION_NULLABLE = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX
         + "Nullable";
+
+    static Issue[] getIssues() {
+        return new Issue[]{ISSUE_MEDHOD, ISSUE_FIELD};
+    }
 
     @Nullable
     @Override
@@ -102,7 +125,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 field.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
-                mContext.report(ISSUE, field, mContext.getLocation(field), MISSING_ANNOTATION, quickFixAnnotation(field));
+                mContext.report(ISSUE_FIELD, field, mContext.getLocation(field), MISSING_ANNOTATION, quickFixAnnotation(field));
             }
         }
 
@@ -132,7 +155,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 method.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
-                mContext.report(ISSUE, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
+                mContext.report(ISSUE_MEDHOD, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
             }
         }
 
@@ -145,7 +168,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                 parameter.findAnnotation(ANNOTATION_NULLABLE) != null;
 
             if (!hasNullifyAnnotaion) {
-                mContext.report(ISSUE, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION, quickFixAnnotation(parameter));
+                mContext.report(ISSUE_MEDHOD, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION, quickFixAnnotation(parameter));
             }
         }
 
