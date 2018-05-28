@@ -26,12 +26,13 @@ version = '0.4'
 def lintVersion = '26.1.2'
 
 dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41'
     compileOnly "com.android.tools.lint:lint-api:$lintVersion"
     compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
-    testCompile "junit:junit:4.12"
-    testCompile "com.android.tools.lint:lint:$lintVersion"
-    testCompile "com.android.tools.lint:lint-tests:$lintVersion"
-    testCompile "com.android.tools:testutils:$lintVersion"
+    testImplementation 'junit:junit:4.12'
+    testImplementation "com.android.tools.lint:lint:$lintVersion"
+    testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
+    testImplementation "com.android.tools:testutils:$lintVersion"
 }
 
 dependencyUpdates {
