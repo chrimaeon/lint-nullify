@@ -29,7 +29,7 @@ plugins {
 }
 
 group = "com.cmgapps.android"
-version = "0.4"
+version = "1.0"
 
 val lintVersion = "26.1.2"
 
