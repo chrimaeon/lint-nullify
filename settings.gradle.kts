@@ -15,25 +15,5 @@
  *
  */
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath "com.android.tools.build:gradle:3.1.1"
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.41'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+rootProject.name = "lint-nullify"
+include(":checks")
