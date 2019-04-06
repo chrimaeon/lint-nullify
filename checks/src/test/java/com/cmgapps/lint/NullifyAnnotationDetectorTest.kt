@@ -122,6 +122,24 @@ class NullifyAnnotationDetectorTest {
     }
 
     @Test
+    fun correctFieldAndroidXAnnotation() {
+        lint()
+            .files(
+                java("""
+                    |package test.pkg;
+                    |public class Test {
+                    |    @androidx.annotation.Nullable private String myString;
+                    |    private int myInt;
+                    |    private static final String constString = "Test";
+                    |}""".trimMargin()
+                )
+            )
+            .issues(*NullifyAnnotationDetector.getIssues())
+            .run()
+            .expect("No warnings.")
+    }
+
+    @Test
     fun missingMethodAnnotation() {
         lint()
             .files(
@@ -160,6 +178,22 @@ class NullifyAnnotationDetectorTest {
                     |package test.pkg;
                     |public class Test {
                     |    public void foo(int myInt, @android.support.annotation.NonNull String myString){};
+                    |}""".trimMargin()
+                )
+            )
+            .issues(*NullifyAnnotationDetector.getIssues())
+            .run()
+            .expect("No warnings.")
+    }
+
+    @Test
+    fun correctMethodAndroidXAnnotation() {
+        lint()
+            .files(
+                java("""
+                    |package test.pkg;
+                    |public class Test {
+                    |    public void foo(int myInt, @androidx.annotation.NonNull String myString){};
                     |}""".trimMargin()
                 )
             )

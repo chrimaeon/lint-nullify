@@ -25,13 +25,13 @@ plugins {
     `maven-publish`
     kotlin("jvm") version "1.3.21"
     id("com.jfrog.bintray") version "1.8.4"
-    id("com.github.ben-manes.versions") version "0.20.0"
+    id("com.github.ben-manes.versions") version "0.21.0"
 }
 
 group = "com.cmgapps.android"
-version = "1.0"
+version = "1.1"
 
-val lintVersion = "26.1.2"
+val lintVersion = "26.3.2"
 
 dependencies {
     compileOnly("com.android.tools.lint:lint-api:$lintVersion")
