@@ -43,17 +43,12 @@ import org.jetbrains.uast.UParameter;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("UnstableApiUsage")
 public class NullifyAnnotationDetector extends Detector implements SourceCodeScanner {
 
     private static final Issue ISSUE_MEDHOD = Issue.create(
         "MissingNullifyMethodAnnotation",
-
-        // Title -- shown in the IDE's preference dialog, as category headers in the
-        // Analysis results window, etc
         "Nullable/NonNull method parameter/return type check",
-
-        // Full explanation of the issue; you can use some markdown markup such as
-        // `monospace`, *italic*, and **bold**.
         "Checks for missing `@NonNull/@Nullable` Annotations for method paramters and return types",
         Category.CORRECTNESS,
         4,
@@ -64,13 +59,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
     private static final Issue ISSUE_FIELD = Issue.create(
         "MissingNullifyFieldAnnotation",
-
-        // Title -- shown in the IDE's preference dialog, as category headers in the
-        // Analysis results window, etc
         "Nullable/NonNull field check",
-
-        // Full explanation of the issue; you can use some markdown markup such as
-        // `monospace`, *italic*, and **bold**.
         "Checks for missing `@NonNull/@Nullable` Annotations for fields",
         Category.CORRECTNESS,
         4,
@@ -190,15 +179,28 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
             String nonNullFixString = "@NonNull " + sourceString;
             String nullableFixString = "@Nullable " + sourceString;
 
-            LintFix.GroupBuilder group = fix().group();
-            group.add(fix().name("Add @NonNull").replace().text(sourceString).shortenNames().reformat(true).with(nonNullFixString).build());
-            group.add(fix().name("Add @Nullable").replace().text(sourceString).shortenNames().reformat(true).with(nullableFixString).build());
-
-            return group.build();
+            return fix().group()
+                .add(fix()
+                    .name("Add @NonNull")
+                    .replace()
+                    .text(sourceString)
+                    .shortenNames()
+                    .reformat(true)
+                    .with(nonNullFixString)
+                    .build())
+                .add(fix()
+                    .name("Add @Nullable")
+                    .replace()
+                    .text(sourceString)
+                    .shortenNames()
+                    .reformat(true)
+                    .with(nullableFixString)
+                    .build())
+                .build();
         }
 
         private boolean isInitializedFinalField(UField field) {
-            return field.isFinal() && field.asSourceString().indexOf('=') > -1;
+            return field.isFinal() && field.getUastInitializer() != null;
         }
 
         private boolean hasNoNullifyAnnotation(UAnnotated annotated) {
