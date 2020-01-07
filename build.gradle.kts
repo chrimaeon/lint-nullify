@@ -22,6 +22,13 @@ allprojects {
     }
 }
 
-tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
+tasks {
+    register<Delete>("clean") {
+        delete(rootProject.buildDir)
+    }
+
+    wrapper {
+        distributionType = Wrapper.DistributionType.ALL
+        gradleVersion = "6.0.1"
+    }
 }
