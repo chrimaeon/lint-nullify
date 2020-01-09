@@ -21,36 +21,41 @@ import com.android.tools.lint.checks.infrastructure.TestFiles.java
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import org.junit.Test
 
+@Suppress("UnstableApiUsage")
 class NullifyAnnotationDetectorTest {
 
     @Test
     fun missingConstructorParameterAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public Test(int myInt, String myString){}
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public Test(int myInt, String myString){}
+                    }
+                    """.trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
-            .expect("""
-                |src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                |    public Test(int myInt, String myString){}
-                |                           ~~~~~~~~~~~~~~~
-                |0 errors, 1 warnings""".trimMargin()
+            .expect(
+                """
+                src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
+                    public Test(int myInt, String myString){}
+                                           ~~~~~~~~~~~~~~~
+                0 errors, 1 warnings""".trimIndent()
             )
-            .expectFixDiffs("""
-                |Fix for src/test/pkg/Test.java line 2: Add @NonNull:
-                |@@ -3 +3
-                |-     public Test(int myInt, String myString){}
-                |+     public Test(int myInt, @NonNull String myString){}
-                |Fix for src/test/pkg/Test.java line 2: Add @Nullable:
-                |@@ -3 +3
-                |-     public Test(int myInt, String myString){}
-                |+     public Test(int myInt, @Nullable String myString){}""".trimMargin()
+            .expectFixDiffs(
+                """
+                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                @@ -3 +3
+                -     public Test(int myInt, String myString){}
+                +     public Test(int myInt, @NonNull String myString){}
+                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                @@ -3 +3
+                -     public Test(int myInt, String myString){}
+                +     public Test(int myInt, @Nullable String myString){}""".trimIndent()
             )
     }
 
@@ -58,11 +63,12 @@ class NullifyAnnotationDetectorTest {
     fun correctConstructorParameterAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public Test(int myInt, @android.support.annotation.Nullable String myString){}
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public Test(int myInt, @android.support.annotation.Nullable String myString){}
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -74,32 +80,35 @@ class NullifyAnnotationDetectorTest {
     fun missingFieldAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    private String myString;
-                    |    private int myInt;
-                    |    private static final String constString = "Test";
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        private String myString;
+                        private int myInt;
+                        private static final String constString = "Test";
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
-            .expect("""
-                |src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyFieldAnnotation]
-                |    private String myString;
-                |    ~~~~~~~~~~~~~~~~~~~~~~~~
-                |0 errors, 1 warnings""".trimMargin()
+            .expect(
+                """
+                src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyFieldAnnotation]
+                    private String myString;
+                    ~~~~~~~~~~~~~~~~~~~~~~~~
+                0 errors, 1 warnings""".trimIndent()
             )
-            .expectFixDiffs("""
-                |Fix for src/test/pkg/Test.java line 2: Add @NonNull:
-                |@@ -3 +3
-                |-     private String myString;
-                |+     @NonNull private String myString;
-                |Fix for src/test/pkg/Test.java line 2: Add @Nullable:
-                |@@ -3 +3
-                |-     private String myString;
-                |+     @Nullable private String myString;""".trimMargin()
+            .expectFixDiffs(
+                """
+                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                @@ -3 +3
+                -     private String myString;
+                +     @NonNull private String myString;
+                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                @@ -3 +3
+                -     private String myString;
+                +     @Nullable private String myString;""".trimIndent()
             )
     }
 
@@ -107,13 +116,14 @@ class NullifyAnnotationDetectorTest {
     fun correctFieldAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    @android.support.annotation.NonNull private String myString;
-                    |    private int myInt;
-                    |    private static final String constString = "Test";
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        @android.support.annotation.NonNull private String myString;
+                        private int myInt;
+                        private static final String constString = "Test";
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -125,13 +135,14 @@ class NullifyAnnotationDetectorTest {
     fun correctFieldAndroidXAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    @androidx.annotation.Nullable private String myString;
-                    |    private int myInt;
-                    |    private static final String constString = "Test";
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        @androidx.annotation.Nullable private String myString;
+                        private int myInt;
+                        private static final String constString = "Test";
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -143,42 +154,47 @@ class NullifyAnnotationDetectorTest {
     fun missingMethodAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public void foo(int myInt, String myString){};
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public void foo(int myInt, String myString){};
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
-            .expect("""
-                |src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                |    public void foo(int myInt, String myString){};
-                |                               ~~~~~~~~~~~~~~~
-                |0 errors, 1 warnings""".trimMargin()
+            .expect(
+                """
+                src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
+                    public void foo(int myInt, String myString){};
+                                               ~~~~~~~~~~~~~~~
+                0 errors, 1 warnings""".trimIndent()
             )
-            .expectFixDiffs("""
-                |Fix for src/test/pkg/Test.java line 2: Add @NonNull:
-                |@@ -3 +3
-                |-     public void foo(int myInt, String myString){};
-                |+     public void foo(int myInt, @NonNull String myString){};
-                |Fix for src/test/pkg/Test.java line 2: Add @Nullable:
-                |@@ -3 +3
-                |-     public void foo(int myInt, String myString){};
-                |+     public void foo(int myInt, @Nullable String myString){};
-                """.trimMargin())
+            .expectFixDiffs(
+                """
+                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                @@ -3 +3
+                -     public void foo(int myInt, String myString){};
+                +     public void foo(int myInt, @NonNull String myString){};
+                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                @@ -3 +3
+                -     public void foo(int myInt, String myString){};
+                +     public void foo(int myInt, @Nullable String myString){};
+                """.trimIndent()
+            )
     }
 
     @Test
     fun correctMethodAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public void foo(int myInt, @android.support.annotation.NonNull String myString){};
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public void foo(int myInt, @android.support.annotation.NonNull String myString){};
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -190,11 +206,12 @@ class NullifyAnnotationDetectorTest {
     fun correctMethodAndroidXAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public void foo(int myInt, @androidx.annotation.NonNull String myString){};
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public void foo(int myInt, @androidx.annotation.NonNull String myString){};
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -206,31 +223,34 @@ class NullifyAnnotationDetectorTest {
     fun missingMethodArrayAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public void foo(int[] myInt, String[] myString){};
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public void foo(int[] myInt, String[] myString){};
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
-            .expect("""
-                |src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                |    public void foo(int[] myInt, String[] myString){};
-                |                                 ~~~~~~~~~~~~~~~~~
-                |0 errors, 1 warnings""".trimMargin()
+            .expect(
+                """
+                src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
+                    public void foo(int[] myInt, String[] myString){};
+                                                 ~~~~~~~~~~~~~~~~~
+                0 errors, 1 warnings""".trimIndent()
             )
-            .expectFixDiffs("""
-                |Fix for src/test/pkg/Test.java line 2: Add @NonNull:
-                |@@ -3 +3
-                |-     public void foo(int[] myInt, String[] myString){};
-                |+     public void foo(int[] myInt, @NonNull String[] myString){};
-                |Fix for src/test/pkg/Test.java line 2: Add @Nullable:
-                |@@ -3 +3
-                |-     public void foo(int[] myInt, String[] myString){};
-                |+     public void foo(int[] myInt, @Nullable String[] myString){};
-                """.trimMargin()
+            .expectFixDiffs(
+                """
+                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                @@ -3 +3
+                -     public void foo(int[] myInt, String[] myString){};
+                +     public void foo(int[] myInt, @NonNull String[] myString){};
+                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                @@ -3 +3
+                -     public void foo(int[] myInt, String[] myString){};
+                +     public void foo(int[] myInt, @Nullable String[] myString){};
+                """.trimIndent()
             )
     }
 
@@ -238,11 +258,12 @@ class NullifyAnnotationDetectorTest {
     fun correctMethodArrayAnnotation() {
         lint()
             .files(
-                java("""
-                        |package test.pkg;
-                        |public class Test {
-                        |    public void foo(int[] myInt, @android.support.annotation.Nullable String[] myString){};
-                        |}""".trimMargin()
+                java(
+                    """
+                        package test.pkg;
+                        public class Test {
+                            public void foo(int[] myInt, @android.support.annotation.Nullable String[] myString){};
+                        }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -254,32 +275,35 @@ class NullifyAnnotationDetectorTest {
     fun missingReturnAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public int foo(){};
-                    |    public String foo(){};
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public int foo(){};
+                        public String foo(){};
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
-            .expect("""
-                |src/test/pkg/Test.java:4: Warning: Return type is missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                |    public String foo(){};
-                |    ~~~~~~~~~~~~~~~~~~~~~
-                |0 errors, 1 warnings""".trimMargin()
+            .expect(
+                """
+                src/test/pkg/Test.java:4: Warning: Return type is missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
+                    public String foo(){};
+                    ~~~~~~~~~~~~~~~~~~~~~
+                0 errors, 1 warnings""".trimIndent()
             )
-            .expectFixDiffs("""
-                |Fix for src/test/pkg/Test.java line 3: Add @NonNull:
-                |@@ -4 +4
-                |-     public String foo(){};
-                |+     @NonNull public String foo(){};
-                |Fix for src/test/pkg/Test.java line 3: Add @Nullable:
-                |@@ -4 +4
-                |-     public String foo(){};
-                |+     @Nullable public String foo(){};
-                """.trimMargin()
+            .expectFixDiffs(
+                """
+                Fix for src/test/pkg/Test.java line 3: Add @NonNull:
+                @@ -4 +4
+                -     public String foo(){};
+                +     @NonNull public String foo(){};
+                Fix for src/test/pkg/Test.java line 3: Add @Nullable:
+                @@ -4 +4
+                -     public String foo(){};
+                +     @Nullable public String foo(){};
+                """.trimIndent()
             )
     }
 
@@ -287,13 +311,14 @@ class NullifyAnnotationDetectorTest {
     fun correctReturnAnnotation() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public int foo(){};
-                    |    @android.support.annotation.NonNull
-                    |    public String foo(){};
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public int foo(){};
+                        @android.support.annotation.NonNull
+                        public String foo(){};
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -305,31 +330,34 @@ class NullifyAnnotationDetectorTest {
     fun uninitializedFinalField() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public final Foo foo;
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public final Foo foo;
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
-            .expect("""
-                |src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyFieldAnnotation]
-                |    public final Foo foo;
-                |    ~~~~~~~~~~~~~~~~~~~~~
-                |0 errors, 1 warnings""".trimMargin()
+            .expect(
+                """
+                src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyFieldAnnotation]
+                    public final Foo foo;
+                    ~~~~~~~~~~~~~~~~~~~~~
+                0 errors, 1 warnings""".trimIndent()
             )
-            .expectFixDiffs("""
-                |Fix for src/test/pkg/Test.java line 2: Add @NonNull:
-                |@@ -3 +3
-                |-     public final Foo foo;
-                |+     @NonNull public final Foo foo;
-                |Fix for src/test/pkg/Test.java line 2: Add @Nullable:
-                |@@ -3 +3
-                |-     public final Foo foo;
-                |+     @Nullable public final Foo foo;
-                """.trimMargin()
+            .expectFixDiffs(
+                """
+                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                @@ -3 +3
+                -     public final Foo foo;
+                +     @NonNull public final Foo foo;
+                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                @@ -3 +3
+                -     public final Foo foo;
+                +     @Nullable public final Foo foo;
+                """.trimIndent()
             )
     }
 
@@ -337,11 +365,12 @@ class NullifyAnnotationDetectorTest {
     fun initializedFinalField() {
         lint()
             .files(
-                java("""
-                    |package test.pkg;
-                    |public class Test {
-                    |    public final Foo foo = new Foo();
-                    |}""".trimMargin()
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        public final Foo foo = new Foo();
+                    }""".trimIndent()
                 )
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -353,12 +382,14 @@ class NullifyAnnotationDetectorTest {
     fun testAnnotationDefinition() {
         lint()
             .files(
-                java("""
-                |package test.pkg;
-                |public @interface Test {
-                |   String value();
-                |}""".trimMargin()
-                ))
+                java(
+                    """
+                package test.pkg;
+                public @interface Test {
+                   String value();
+                }""".trimIndent()
+                )
+            )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
             .expect("No warnings.")

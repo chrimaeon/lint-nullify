@@ -18,7 +18,8 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.jfrog.bintray.gradle.BintrayExtension
 import java.io.FileInputStream
-import java.util.*
+import java.util.Date
+import java.util.Properties
 
 plugins {
     `java-library`
@@ -37,7 +38,7 @@ dependencies {
     compileOnly("com.android.tools.lint:lint-api:$lintVersion")
     compileOnly("com.android.tools.lint:lint-checks:$lintVersion")
 
-    testImplementation(kotlin("stdlib-jdk8", "1.3.61"))
+    testImplementation(kotlin("stdlib-jdk7", "1.3.61"))
     testImplementation("junit:junit:4.13")
     testImplementation("com.android.tools.lint:lint:$lintVersion")
     testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
@@ -71,7 +72,7 @@ tasks.named<Jar>("jar") {
             "Built-Date" to Date(),
             "Built-JDK" to System.getProperty("java.version"),
             "Built-Gradle" to gradle.gradleVersion,
-            "Lint-Registry-v2" to "com.cmgapps.lint.IssueRegistry"
+            "Lint-Registry-v2" to "com.cmgapps.lint.NullifyIssueRegistry"
         )
     }
 }
