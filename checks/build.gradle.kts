@@ -23,6 +23,7 @@ import java.util.Properties
 plugins {
     `java-library`
     `maven-publish`
+    jacoco
     kotlin("jvm") version "1.3.61"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.github.ben-manes.versions") version "0.27.0"
@@ -80,6 +81,17 @@ tasks {
     withType<Test> {
         testLogging {
             events("passed", "skipped", "failed")
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    counter = "INSTRUCTION"
+                    minimum = "0.8".toBigDecimal()
+                }
+            }
         }
     }
 }
