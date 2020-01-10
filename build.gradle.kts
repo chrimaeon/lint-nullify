@@ -20,6 +20,13 @@ allprojects {
         google()
         jcenter()
     }
+
+    gradle.projectsEvaluated {
+        tasks.withType<JavaCompile>()
+            .configureEach {
+                options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
+            }
+    }
 }
 
 tasks {

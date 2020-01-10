@@ -17,7 +17,6 @@
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.jfrog.bintray.gradle.BintrayExtension
-import java.io.FileInputStream
 import java.util.Date
 import java.util.Properties
 
@@ -63,26 +62,34 @@ java {
 
 val pomName = "Android Nullify Lint Checks"
 
-tasks.named<Jar>("jar") {
-    manifest {
-        attributes(
-            "Implementation-Title" to pomName,
-            "Implementation-Version" to project.version.toString(),
-            "Built-By" to System.getProperty("user.name"),
-            "Built-Date" to Date(),
-            "Built-JDK" to System.getProperty("java.version"),
-            "Built-Gradle" to gradle.gradleVersion,
-            "Lint-Registry-v2" to "com.cmgapps.lint.NullifyIssueRegistry"
-        )
+tasks {
+    named<Jar>("jar") {
+        manifest {
+            attributes(
+                "Implementation-Title" to pomName,
+                "Implementation-Version" to project.version.toString(),
+                "Built-By" to System.getProperty("user.name"),
+                "Built-Date" to Date(),
+                "Built-JDK" to System.getProperty("java.version"),
+                "Built-Gradle" to gradle.gradleVersion,
+                "Lint-Registry-v2" to "com.cmgapps.lint.NullifyIssueRegistry"
+            )
+        }
+    }
+
+    withType<Test> {
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
     }
 }
 
-tasks.register<Jar>("sourcesJar") {
+val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
-tasks.register<Jar>("javadocJar") {
+val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
     from(tasks["javadoc"])
 }
@@ -93,8 +100,8 @@ publishing {
     publications {
         create<MavenPublication>("bintray") {
             from(components["java"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
+            artifact(sourcesJar.get())
+            artifact(javadocJar.get())
             artifactId = "checks"
             pom {
 
@@ -126,15 +133,22 @@ publishing {
             }
         }
     }
-
 }
 
 bintray {
-    val credentialProps = Properties().apply {
-        load(FileInputStream(file("${project.rootDir}/credentials.properties")))
+    val credsFile = file("${project.rootDir}/credentials.properties")
+    if (credsFile.exists()) {
+        Properties().apply {
+            load(credsFile.inputStream())
+        }.let {
+            user = it.getProperty("user")
+            key = it.getProperty("key")
+        }
+    } else {
+        user = System.getenv("BINTRAY_USER")
+        key = System.getenv("BINTRAY_KEY")
     }
-    user = credentialProps.getProperty("user")
-    key = credentialProps.getProperty("key")
+
     setPublications("bintray")
 
     pkg(closureOf<BintrayExtension.PackageConfig> {
@@ -151,3 +165,4 @@ bintray {
         })
     })
 }
+
