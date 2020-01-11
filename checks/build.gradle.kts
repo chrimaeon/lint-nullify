@@ -43,6 +43,7 @@ dependencies {
     testImplementation("com.android.tools.lint:lint:$lintVersion")
     testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
     testImplementation("com.android.tools:testutils:$lintVersion")
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
 tasks.withType<DependencyUpdatesTask> {

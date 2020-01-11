@@ -22,7 +22,7 @@ import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import org.junit.Test
 
 @Suppress("UnstableApiUsage")
-class NullifyAnnotationDetectorTest {
+class NullifyAnnotationDetectorShould {
 
     @Test
     fun missingConstructorParameterAnnotation() {
