@@ -20,8 +20,22 @@ allprojects {
         google()
         jcenter()
     }
+
+    gradle.projectsEvaluated {
+        tasks.withType<JavaCompile>()
+            .configureEach {
+                options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
+            }
+    }
 }
 
-tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
+tasks {
+    register<Delete>("clean") {
+        delete(rootProject.buildDir)
+    }
+
+    wrapper {
+        distributionType = Wrapper.DistributionType.ALL
+        gradleVersion = "6.0.1"
+    }
 }

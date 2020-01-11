@@ -46,10 +46,10 @@ import java.util.List;
 @SuppressWarnings("UnstableApiUsage")
 public class NullifyAnnotationDetector extends Detector implements SourceCodeScanner {
 
-    private static final Issue ISSUE_MEDHOD = Issue.create(
+    private static final Issue ISSUE_METHOD = Issue.create(
         "MissingNullifyMethodAnnotation",
         "Nullable/NonNull method parameter/return type check",
-        "Checks for missing `@NonNull/@Nullable` Annotations for method paramters and return types",
+        "Checks for missing `@NonNull/@Nullable` Annotations for method parameters and return types",
         Category.CORRECTNESS,
         4,
         Severity.WARNING,
@@ -86,7 +86,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         + "Nullable";
 
     static Issue[] getIssues() {
-        return new Issue[]{ISSUE_MEDHOD, ISSUE_FIELD};
+        return new Issue[]{ISSUE_METHOD, ISSUE_FIELD};
     }
 
     @Nullable
@@ -147,7 +147,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
             }
 
             if (hasNoNullifyAnnotation(method)) {
-                mContext.report(ISSUE_MEDHOD, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
+                mContext.report(ISSUE_METHOD, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
             }
         }
 
@@ -157,7 +157,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
             }
 
             if (hasNoNullifyAnnotation(parameter)) {
-                mContext.report(ISSUE_MEDHOD, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION, quickFixAnnotation(parameter));
+                mContext.report(ISSUE_METHOD, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION, quickFixAnnotation(parameter));
             }
         }
 

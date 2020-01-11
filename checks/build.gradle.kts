@@ -17,46 +17,42 @@
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.jfrog.bintray.gradle.BintrayExtension
-import java.io.FileInputStream
-import java.util.*
+import java.util.Date
+import java.util.Properties
 
 plugins {
     `java-library`
     `maven-publish`
-    kotlin("jvm") version "1.3.31"
+    jacoco
+    kotlin("jvm") version "1.3.61"
     id("com.jfrog.bintray") version "1.8.4"
-    id("com.github.ben-manes.versions") version "0.21.0"
+    id("com.github.ben-manes.versions") version "0.27.0"
 }
 
 group = "com.cmgapps.android"
-version = "1.2"
+version = "1.3"
 
-val lintVersion = "26.4.1"
+val lintVersion = "26.5.3"
 
 dependencies {
     compileOnly("com.android.tools.lint:lint-api:$lintVersion")
     compileOnly("com.android.tools.lint:lint-checks:$lintVersion")
 
-    testImplementation("junit:junit:4.12")
+    testImplementation(kotlin("stdlib-jdk7", "1.3.61"))
+    testImplementation("junit:junit:4.13")
     testImplementation("com.android.tools.lint:lint:$lintVersion")
     testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
     testImplementation("com.android.tools:testutils:$lintVersion")
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
-tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+tasks.withType<DependencyUpdatesTask> {
     revision = "release"
-    resolutionStrategy {
-        componentSelection {
-            all {
-                listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea")
-                    .map { qualifier -> Regex("(?i).*[.-]$qualifier[.\\d-+]*") }
-                    .any { it.matches(candidate.version) }
-                    .let {
-                        if (it) {
-                            reject("Release candidate")
-                        }
-                    }
-            }
+
+    rejectVersionIf {
+        listOf("alpha", "beta", "rc", "cr", "m").any { qualifier ->
+            """(?i).*[.-]$qualifier[.\d-]*""".toRegex()
+                .containsMatchIn(candidate.version)
         }
     }
 }
@@ -68,24 +64,45 @@ java {
 
 val pomName = "Android Nullify Lint Checks"
 
-tasks.named<Jar>("jar") {
-    manifest {
-        attributes("Implementation-Title" to pomName,
-            "Implementation-Version" to project.version.toString(),
-            "Built-By" to System.getProperty("user.name"),
-            "Built-Date" to Date(),
-            "Built-JDK" to System.getProperty("java.version"),
-            "Built-Gradle" to gradle.gradleVersion,
-            "Lint-Registry-v2" to "com.cmgapps.lint.IssueRegistry")
+tasks {
+    named<Jar>("jar") {
+        manifest {
+            attributes(
+                "Implementation-Title" to pomName,
+                "Implementation-Version" to project.version.toString(),
+                "Built-By" to System.getProperty("user.name"),
+                "Built-Date" to Date(),
+                "Built-JDK" to System.getProperty("java.version"),
+                "Built-Gradle" to gradle.gradleVersion,
+                "Lint-Registry-v2" to "com.cmgapps.lint.NullifyIssueRegistry"
+            )
+        }
+    }
+
+    withType<Test> {
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    jacocoTestCoverageVerification {
+        violationRules {
+            rule {
+                limit {
+                    counter = "INSTRUCTION"
+                    minimum = "0.8".toBigDecimal()
+                }
+            }
+        }
     }
 }
 
-tasks.register<Jar>("sourcesJar") {
+val sourcesJar by tasks.registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
 
-tasks.register<Jar>("javadocJar") {
+val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
     from(tasks["javadoc"])
 }
@@ -96,8 +113,8 @@ publishing {
     publications {
         create<MavenPublication>("bintray") {
             from(components["java"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
+            artifact(sourcesJar.get())
+            artifact(javadocJar.get())
             artifactId = "checks"
             pom {
 
@@ -129,14 +146,22 @@ publishing {
             }
         }
     }
-
 }
 
 bintray {
-    val credentialProps = Properties()
-    credentialProps.load(FileInputStream(file("${project.rootDir}/credentials.properties")))
-    user = credentialProps.getProperty("user")
-    key = credentialProps.getProperty("key")
+    val credsFile = file("${project.rootDir}/credentials.properties")
+    if (credsFile.exists()) {
+        Properties().apply {
+            load(credsFile.inputStream())
+        }.let {
+            user = it.getProperty("user")
+            key = it.getProperty("key")
+        }
+    } else {
+        user = System.getenv("BINTRAY_USER")
+        key = System.getenv("BINTRAY_KEY")
+    }
+
     setPublications("bintray")
 
     pkg(closureOf<BintrayExtension.PackageConfig> {
@@ -153,3 +178,4 @@ bintray {
         })
     })
 }
+
