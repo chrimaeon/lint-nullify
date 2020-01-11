@@ -36,13 +36,15 @@ commands:
           key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}
 
 jobs:
-  build:
+  test:
     executor: android-executor
     steps:
       - checkout
       - restore_gradle_wrapper
       - restore_gradle_cache
-      - run: ./gradlew check jacocoTestReport jacocoTestCoverageVerification
+      - run:
+          name: Test
+          command: ./gradlew check jacocoTestReport jacocoTestCoverageVerification
       - save_gradle_wrapper
       - save_gradle_cache
       - store_test_results:
@@ -50,3 +52,36 @@ jobs:
       - store_artifacts:
           path: checks/build/reports
           when: always
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+            - ./**/build
+  deploy:
+    executor: android-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy to Bintray
+          command: ./gradlew :checks:bintrayUpload
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - test
+      - hold:
+          type: approval
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
+      - deploy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only: master
