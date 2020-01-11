@@ -14,26 +14,15 @@
  * limitations under the License.
  *
  */
+package com.cmgapps.lint
 
-package com.cmgapps.lint;
+import com.android.tools.lint.client.api.IssueRegistry
+import com.android.tools.lint.detector.api.CURRENT_API
+import com.google.auto.service.AutoService
 
-import com.android.tools.lint.client.api.IssueRegistry;
-import com.android.tools.lint.detector.api.ApiKt;
-import com.android.tools.lint.detector.api.Issue;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
-import java.util.List;
-
-public class NullifyIssueRegistry extends IssueRegistry {
-    @NotNull
-    @Override
-    public List<Issue> getIssues() {
-        return Arrays.asList(NullifyAnnotationDetector.getIssues());
-    }
-
-    @Override
-    public int getApi() {
-        return ApiKt.CURRENT_API;
-    }
+@AutoService(IssueRegistry::class)
+class NullifyIssueRegistry : IssueRegistry() {
+    override val issues = NullifyAnnotationDetector.getIssues().asList()
+    override val api = CURRENT_API
+    override val minApi = 3
 }
