@@ -38,6 +38,10 @@ dependencies {
     compileOnly("com.android.tools.lint:lint-api:$lintVersion")
     compileOnly("com.android.tools.lint:lint-checks:$lintVersion")
 
+    // use annotationProcessor only once artifact is fixed
+    compileOnly("com.google.auto.service:auto-service:1.0-rc6")
+    annotationProcessor("com.google.auto.service:auto-service:1.0-rc6")
+
     testImplementation(kotlin("stdlib-jdk7", "1.3.61"))
     testImplementation("junit:junit:4.13")
     testImplementation("com.android.tools.lint:lint:$lintVersion")
