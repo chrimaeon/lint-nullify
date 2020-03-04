@@ -19,6 +19,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 
     gradle.projectsEvaluated {
@@ -36,6 +37,6 @@ tasks {
 
     wrapper {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.0.1"
+        gradleVersion = "6.2.2"
     }
 }

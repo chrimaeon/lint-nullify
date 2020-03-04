@@ -24,15 +24,15 @@ plugins {
     `java-library`
     `maven-publish`
     jacoco
-    kotlin("jvm") version "1.3.61"
+    kotlin("jvm") version "1.3.70"
     id("com.jfrog.bintray") version "1.8.4"
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 group = "com.cmgapps.android"
 version = "1.3.1"
 
-val lintVersion = "26.5.3"
+val lintVersion = "26.6.1"
 
 dependencies {
     compileOnly("com.android.tools.lint:lint-api:$lintVersion")
@@ -42,7 +42,7 @@ dependencies {
     compileOnly("com.google.auto.service:auto-service:1.0-rc6")
     annotationProcessor("com.google.auto.service:auto-service:1.0-rc6")
 
-    testImplementation(kotlin("stdlib-jdk7", "1.3.61"))
+    testImplementation(kotlin("stdlib-jdk7", "1.3.70"))
     testImplementation("junit:junit:4.13")
     testImplementation("com.android.tools.lint:lint:$lintVersion")
     testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
