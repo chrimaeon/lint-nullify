@@ -18,18 +18,18 @@
 package com.cmgapps.lint;
 
 import com.android.SdkConstants;
-import com.android.annotations.NonNull;
 import com.android.tools.lint.client.api.UElementHandler;
 import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.Lint;
 import com.android.tools.lint.detector.api.LintFix;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 import com.android.tools.lint.detector.api.SourceCodeScanner;
-import com.intellij.psi.PsiTypeElement;
+import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.uast.UAnnotated;
@@ -68,22 +68,30 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
             NullifyAnnotationDetector.class,
             Scope.JAVA_FILE_SCOPE));
 
-
-    @NonNull
     private static final String SUPPORT_ANNOTATION_NON_NULL = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.oldName()
         + "NonNull";
-
-    @NonNull
     private static final String ANDROIDX_ANNOTATION_NON_NULL = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.newName()
         + "NonNull";
+    private static final String JETBRAINS_NOTNULL = "org.jetbrains.annotations.NotNull";
+    private static final String JAVAX_NONNULL = "javax.annotation.Nonnull";
 
-    @NonNull
     private static final String SUPPORT_ANNOTATION_NULLABLE = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.oldName()
         + "Nullable";
-
-    @NonNull
     private static final String ANDROIDX_ANNOTATION_NULLABLE = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.newName()
         + "Nullable";
+    private static final String JETBRAINS_NULLABLE = "org.jetbrains.annotations.Nullable";
+    private static final String JAVAX_NULLABLE = "javax.annotation.Nullable";
+
+    private static final String[] NULLIFY_ANNOTATIONS = new String[]{
+        SUPPORT_ANNOTATION_NON_NULL,
+        ANDROIDX_ANNOTATION_NON_NULL,
+        JETBRAINS_NOTNULL,
+        JAVAX_NONNULL,
+        SUPPORT_ANNOTATION_NULLABLE,
+        ANDROIDX_ANNOTATION_NULLABLE,
+        JETBRAINS_NULLABLE,
+        JAVAX_NULLABLE
+    };
 
     static Issue[] getIssues() {
         return new Issue[]{ISSUE_METHOD, ISSUE_FIELD};
@@ -115,7 +123,8 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         @Override
         public void visitField(@NotNull UField field) {
 
-            if (isPrimitive(field.getTypeElement()) || isEnumConstant(field) || isConstant(field) || isInitializedFinalField(field)) {
+            if (Lint.isKotlin(field.getLanguage()) || TypeConversionUtil.isPrimitiveAndNotNull(field.getType()) ||
+                isEnumConstant(field) || isConstant(field) || isInitializedFinalField(field)) {
                 return;
             }
 
@@ -126,7 +135,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         @Override
         public void visitMethod(@NotNull UMethod method) {
-            if (method instanceof UAnnotationMethod) {
+            if (Lint.isKotlin(method.getLanguage()) || method instanceof UAnnotationMethod) {
                 return;
             }
 
@@ -141,29 +150,23 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         }
 
         private void handleMethodReturnType(UMethod method) {
-            if (method.isConstructor() || isPrimitive(method.getReturnTypeElement())) {
+            if (method.isConstructor() || TypeConversionUtil.isPrimitiveAndNotNull(method.getReturnType())) {
                 return;
-
             }
 
             if (hasNoNullifyAnnotation(method)) {
-                mContext.report(ISSUE_METHOD, (UElement) method, mContext.getLocation((UElement) method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
+                mContext.report(ISSUE_METHOD, (UElement) method, mContext.getLocation(method), MISSING_RETURN_ANNOTATION, quickFixAnnotation(method));
             }
         }
 
         private void handleParameter(UParameter parameter) {
-            if (isPrimitive(parameter.getTypeElement())) {
+            if (TypeConversionUtil.isPrimitiveAndNotNull(parameter.getType())) {
                 return;
             }
 
             if (hasNoNullifyAnnotation(parameter)) {
                 mContext.report(ISSUE_METHOD, (UElement) parameter, mContext.getLocation((UElement) parameter), MISSING_ANNOTATION, quickFixAnnotation(parameter));
             }
-        }
-
-        private boolean isPrimitive(@Nullable PsiTypeElement psiTypeElement) {
-            return psiTypeElement != null
-                && psiTypeElement.getInnermostComponentReferenceElement() == null;
         }
 
         private boolean isEnumConstant(UField field) {
@@ -204,10 +207,13 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         }
 
         private boolean hasNoNullifyAnnotation(UAnnotated annotated) {
-            return annotated.findAnnotation(SUPPORT_ANNOTATION_NON_NULL) == null &&
-                annotated.findAnnotation(SUPPORT_ANNOTATION_NULLABLE) == null &&
-                annotated.findAnnotation(ANDROIDX_ANNOTATION_NON_NULL) == null &&
-                annotated.findAnnotation(ANDROIDX_ANNOTATION_NULLABLE) == null;
+            for (String annotation : NULLIFY_ANNOTATIONS) {
+                if (annotated.findAnnotation(annotation) != null) {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
