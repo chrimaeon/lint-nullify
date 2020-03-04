@@ -24,6 +24,7 @@ import com.android.tools.lint.detector.api.Detector;
 import com.android.tools.lint.detector.api.Implementation;
 import com.android.tools.lint.detector.api.Issue;
 import com.android.tools.lint.detector.api.JavaContext;
+import com.android.tools.lint.detector.api.Lint;
 import com.android.tools.lint.detector.api.LintFix;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
@@ -122,7 +123,8 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         @Override
         public void visitField(@NotNull UField field) {
 
-            if (TypeConversionUtil.isPrimitiveAndNotNull(field.getType()) || isEnumConstant(field) || isConstant(field) || isInitializedFinalField(field)) {
+            if (Lint.isKotlin(field.getLanguage()) || TypeConversionUtil.isPrimitiveAndNotNull(field.getType()) ||
+                isEnumConstant(field) || isConstant(field) || isInitializedFinalField(field)) {
                 return;
             }
 
@@ -133,7 +135,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
         @Override
         public void visitMethod(@NotNull UMethod method) {
-            if (method instanceof UAnnotationMethod) {
+            if (Lint.isKotlin(method.getLanguage()) || method instanceof UAnnotationMethod) {
                 return;
             }
 

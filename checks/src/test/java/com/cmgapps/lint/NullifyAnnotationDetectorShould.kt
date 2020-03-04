@@ -18,6 +18,7 @@
 package com.cmgapps.lint
 
 import com.android.tools.lint.checks.infrastructure.TestFiles.java
+import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import org.junit.Test
 
@@ -227,7 +228,7 @@ class NullifyAnnotationDetectorShould {
                     """
                     package test.pkg;
                     public class Test {
-                        public void foo(int[] myInt, String[] myString){};
+                        public void foo(int[] myInt, String[] myString){}
                     }
                     """
                 ).indented()
@@ -237,10 +238,10 @@ class NullifyAnnotationDetectorShould {
             .expect(
                 """
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                    public void foo(int[] myInt, String[] myString){};
+                    public void foo(int[] myInt, String[] myString){}
                                     ~~~~~~~~~~~
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                    public void foo(int[] myInt, String[] myString){};
+                    public void foo(int[] myInt, String[] myString){}
                                                  ~~~~~~~~~~~~~~~~~
                 0 errors, 2 warnings
                 """.trimIndent()
@@ -249,20 +250,20 @@ class NullifyAnnotationDetectorShould {
                 """
                 Fix for src/test/pkg/Test.java line 3: Add @NonNull:
                 @@ -3 +3
-                -     public void foo(int[] myInt, String[] myString){};
-                +     public void foo(@NonNull int[] myInt, String[] myString){};
+                -     public void foo(int[] myInt, String[] myString){}
+                +     public void foo(@NonNull int[] myInt, String[] myString){}
                 Fix for src/test/pkg/Test.java line 3: Add @Nullable:
                 @@ -3 +3
-                -     public void foo(int[] myInt, String[] myString){};
-                +     public void foo(@Nullable int[] myInt, String[] myString){};
+                -     public void foo(int[] myInt, String[] myString){}
+                +     public void foo(@Nullable int[] myInt, String[] myString){}
                 Fix for src/test/pkg/Test.java line 3: Add @NonNull:
                 @@ -3 +3
-                -     public void foo(int[] myInt, String[] myString){};
-                +     public void foo(int[] myInt, @NonNull String[] myString){};
+                -     public void foo(int[] myInt, String[] myString){}
+                +     public void foo(int[] myInt, @NonNull String[] myString){}
                 Fix for src/test/pkg/Test.java line 3: Add @Nullable:
                 @@ -3 +3
-                -     public void foo(int[] myInt, String[] myString){};
-                +     public void foo(int[] myInt, @Nullable String[] myString){};
+                -     public void foo(int[] myInt, String[] myString){}
+                +     public void foo(int[] myInt, @Nullable String[] myString){}
                 """.trimIndent()
             )
     }
@@ -417,7 +418,7 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         @org.jetbrains.annotations.NotNull
-                        public String foo(){};
+                        public String foo(){}
                     }"""
                 ).indented()
             )
@@ -435,7 +436,7 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         @org.jetbrains.annotations.Nullable
-                        public String foo(){};
+                        public String foo(){}
                     }"""
                 ).indented()
             )
@@ -453,7 +454,7 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         @javax.annotation.Nonnull
-                        public String foo(){};
+                        public String foo(){}
                     }"""
                 ).indented()
             )
@@ -471,7 +472,24 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         @javax.annotation.Nullable
-                        public String foo(){};
+                        public String foo(){}
+                    }"""
+                ).indented()
+            )
+            .issues(*NullifyAnnotationDetector.getIssues())
+            .run()
+            .expect("No warnings.")
+    }
+
+    @Test
+    fun `check kotlin`() {
+        lint()
+            .files(
+                kotlin(
+                    """
+                    package test.pkg
+                    class Test(val prop: String) {
+                        fun test(): String = ""
                     }"""
                 ).indented()
             )
