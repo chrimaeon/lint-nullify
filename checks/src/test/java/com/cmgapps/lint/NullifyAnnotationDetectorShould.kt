@@ -35,8 +35,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         public Test(int myInt, String myString){}
                     }
-                    """.trimIndent()
-                )
+                    """
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -49,11 +49,11 @@ class NullifyAnnotationDetectorShould {
             )
             .expectFixDiffs(
                 """
-                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 2: Annotate @NonNull:
                 @@ -3 +3
                 -     public Test(int myInt, String myString){}
                 +     public Test(int myInt, @NonNull String myString){}
-                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                Fix for src/test/pkg/Test.java line 2: Annotate @Nullable:
                 @@ -3 +3
                 -     public Test(int myInt, String myString){}
                 +     public Test(int myInt, @Nullable String myString){}""".trimIndent()
@@ -69,8 +69,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public Test(int myInt, @android.support.annotation.Nullable String myString){}
-                    }""".trimIndent()
-                )
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -88,8 +88,8 @@ class NullifyAnnotationDetectorShould {
                         private String myString;
                         private int myInt;
                         private static final String constString = "Test";
-                    }""".trimIndent()
-                )
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -102,11 +102,11 @@ class NullifyAnnotationDetectorShould {
             )
             .expectFixDiffs(
                 """
-                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 2: Annotate @NonNull:
                 @@ -3 +3
                 -     private String myString;
                 +     @NonNull private String myString;
-                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                Fix for src/test/pkg/Test.java line 2: Annotate @Nullable:
                 @@ -3 +3
                 -     private String myString;
                 +     @Nullable private String myString;""".trimIndent()
@@ -124,8 +124,8 @@ class NullifyAnnotationDetectorShould {
                         @android.support.annotation.NonNull private String myString;
                         private int myInt;
                         private static final String constString = "Test";
-                    }""".trimIndent()
-                )
+                        public Test() {myString = "just a string";}}"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -143,8 +143,8 @@ class NullifyAnnotationDetectorShould {
                         @androidx.annotation.Nullable private String myString;
                         private int myInt;
                         private static final String constString = "Test";
-                    }""".trimIndent()
-                )
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -159,29 +159,29 @@ class NullifyAnnotationDetectorShould {
                     """
                     package test.pkg;
                     public class Test {
-                        public void foo(int myInt, String myString){};
-                    }""".trimIndent()
-                )
+                        public void foo(int myInt, String myString){}
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
             .expect(
                 """
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                    public void foo(int myInt, String myString){};
+                    public void foo(int myInt, String myString){}
                                                ~~~~~~~~~~~~~~~
                 0 errors, 1 warnings""".trimIndent()
             )
             .expectFixDiffs(
                 """
-                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 2: Annotate @NonNull:
                 @@ -3 +3
-                -     public void foo(int myInt, String myString){};
-                +     public void foo(int myInt, @NonNull String myString){};
-                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                -     public void foo(int myInt, String myString){}
+                +     public void foo(int myInt, @NonNull String myString){}
+                Fix for src/test/pkg/Test.java line 2: Annotate @Nullable:
                 @@ -3 +3
-                -     public void foo(int myInt, String myString){};
-                +     public void foo(int myInt, @Nullable String myString){};
+                -     public void foo(int myInt, String myString){}
+                +     public void foo(int myInt, @Nullable String myString){}
                 """.trimIndent()
             )
     }
@@ -194,9 +194,9 @@ class NullifyAnnotationDetectorShould {
                     """
                     package test.pkg;
                     public class Test {
-                        public void foo(int myInt, @android.support.annotation.NonNull String myString){};
-                    }""".trimIndent()
-                )
+                        public void foo(int myInt, @android.support.annotation.NonNull String myString){}
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -211,9 +211,9 @@ class NullifyAnnotationDetectorShould {
                     """
                     package test.pkg;
                     public class Test {
-                        public void foo(int myInt, @androidx.annotation.NonNull String myString){};
-                    }""".trimIndent()
-                )
+                        public void foo(int myInt, @androidx.annotation.NonNull String myString){}
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -248,19 +248,19 @@ class NullifyAnnotationDetectorShould {
             )
             .expectFixDiffs(
                 """
-                Fix for src/test/pkg/Test.java line 3: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 3: Annotate @NonNull:
                 @@ -3 +3
                 -     public void foo(int[] myInt, String[] myString){}
                 +     public void foo(@NonNull int[] myInt, String[] myString){}
-                Fix for src/test/pkg/Test.java line 3: Add @Nullable:
+                Fix for src/test/pkg/Test.java line 3: Annotate @Nullable:
                 @@ -3 +3
                 -     public void foo(int[] myInt, String[] myString){}
                 +     public void foo(@Nullable int[] myInt, String[] myString){}
-                Fix for src/test/pkg/Test.java line 3: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 3: Annotate @NonNull:
                 @@ -3 +3
                 -     public void foo(int[] myInt, String[] myString){}
                 +     public void foo(int[] myInt, @NonNull String[] myString){}
-                Fix for src/test/pkg/Test.java line 3: Add @Nullable:
+                Fix for src/test/pkg/Test.java line 3: Annotate @Nullable:
                 @@ -3 +3
                 -     public void foo(int[] myInt, String[] myString){}
                 +     public void foo(int[] myInt, @Nullable String[] myString){}
@@ -276,9 +276,9 @@ class NullifyAnnotationDetectorShould {
                     """
                         package test.pkg;
                         public class Test {
-                            public void foo(@android.support.annotation.Nullable int[] myInt, @android.support.annotation.Nullable String[] myString){};
-                        }""".trimIndent()
-                )
+                            public void foo(@android.support.annotation.Nullable int[] myInt, @android.support.annotation.Nullable String[] myString){}
+                        }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -293,30 +293,30 @@ class NullifyAnnotationDetectorShould {
                     """
                     package test.pkg;
                     public class Test {
-                        public int foo(){};
-                        public String foo(){};
-                    }""".trimIndent()
-                )
+                        public int foo(){}
+                        public String foo(){}
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
             .expect(
                 """
                 src/test/pkg/Test.java:4: Warning: Return type is missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
-                    public String foo(){};
+                    public String foo(){}
                     ~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings""".trimIndent()
             )
             .expectFixDiffs(
                 """
-                Fix for src/test/pkg/Test.java line 3: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 3: Annotate @NonNull:
                 @@ -4 +4
-                -     public String foo(){};
-                +     @NonNull public String foo(){};
-                Fix for src/test/pkg/Test.java line 3: Add @Nullable:
+                -     public String foo(){}
+                +     @NonNull public String foo(){}
+                Fix for src/test/pkg/Test.java line 3: Annotate @Nullable:
                 @@ -4 +4
-                -     public String foo(){};
-                +     @Nullable public String foo(){};
+                -     public String foo(){}
+                +     @Nullable public String foo(){}
                 """.trimIndent()
             )
     }
@@ -329,10 +329,10 @@ class NullifyAnnotationDetectorShould {
                     """
                     package test.pkg;
                     public class Test {
-                        public int foo(){};
+                        public int foo(){}
                         @android.support.annotation.NonNull
-                        public String foo(){};
-                    }""".trimIndent()
+                        public String foo(){}
+                    }"""
                 ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
@@ -349,8 +349,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public final Foo foo;
-                    }""".trimIndent()
-                )
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -363,11 +363,11 @@ class NullifyAnnotationDetectorShould {
             )
             .expectFixDiffs(
                 """
-                Fix for src/test/pkg/Test.java line 2: Add @NonNull:
+                Fix for src/test/pkg/Test.java line 2: Annotate @NonNull:
                 @@ -3 +3
                 -     public final Foo foo;
                 +     @NonNull public final Foo foo;
-                Fix for src/test/pkg/Test.java line 2: Add @Nullable:
+                Fix for src/test/pkg/Test.java line 2: Annotate @Nullable:
                 @@ -3 +3
                 -     public final Foo foo;
                 +     @Nullable public final Foo foo;
@@ -384,8 +384,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public final Foo foo = new Foo();
-                    }""".trimIndent()
-                )
+                    }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()
@@ -401,8 +401,8 @@ class NullifyAnnotationDetectorShould {
                 package test.pkg;
                 public @interface Test {
                    String value();
-                }""".trimIndent()
-                )
+                }"""
+                ).indented()
             )
             .issues(*NullifyAnnotationDetector.getIssues())
             .run()

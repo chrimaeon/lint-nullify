@@ -17,7 +17,6 @@
 
 package com.cmgapps.lint;
 
-import com.android.SdkConstants;
 import com.android.tools.lint.client.api.UElementHandler;
 import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Detector;
@@ -33,6 +32,7 @@ import com.intellij.psi.util.TypeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.uast.UAnnotated;
+import org.jetbrains.uast.UAnnotation;
 import org.jetbrains.uast.UAnnotationMethod;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UEnumConstant;
@@ -67,31 +67,6 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         new Implementation(
             NullifyAnnotationDetector.class,
             Scope.JAVA_FILE_SCOPE));
-
-    private static final String SUPPORT_ANNOTATION_NON_NULL = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.oldName()
-        + "NonNull";
-    private static final String ANDROIDX_ANNOTATION_NON_NULL = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.newName()
-        + "NonNull";
-    private static final String JETBRAINS_NOTNULL = "org.jetbrains.annotations.NotNull";
-    private static final String JAVAX_NONNULL = "javax.annotation.Nonnull";
-
-    private static final String SUPPORT_ANNOTATION_NULLABLE = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.oldName()
-        + "Nullable";
-    private static final String ANDROIDX_ANNOTATION_NULLABLE = SdkConstants.SUPPORT_ANNOTATIONS_PREFIX.newName()
-        + "Nullable";
-    private static final String JETBRAINS_NULLABLE = "org.jetbrains.annotations.Nullable";
-    private static final String JAVAX_NULLABLE = "javax.annotation.Nullable";
-
-    private static final String[] NULLIFY_ANNOTATIONS = new String[]{
-        SUPPORT_ANNOTATION_NON_NULL,
-        ANDROIDX_ANNOTATION_NON_NULL,
-        JETBRAINS_NOTNULL,
-        JAVAX_NONNULL,
-        SUPPORT_ANNOTATION_NULLABLE,
-        ANDROIDX_ANNOTATION_NULLABLE,
-        JETBRAINS_NULLABLE,
-        JAVAX_NULLABLE
-    };
 
     static Issue[] getIssues() {
         return new Issue[]{ISSUE_METHOD, ISSUE_FIELD};
@@ -184,7 +159,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
 
             return fix().group()
                 .add(fix()
-                    .name("Add @NonNull")
+                    .name("Annotate @NonNull")
                     .replace()
                     .text(sourceString)
                     .shortenNames()
@@ -192,7 +167,7 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
                     .with(nonNullFixString)
                     .build())
                 .add(fix()
-                    .name("Add @Nullable")
+                    .name("Annotate @Nullable")
                     .replace()
                     .text(sourceString)
                     .shortenNames()
@@ -207,12 +182,10 @@ public class NullifyAnnotationDetector extends Detector implements SourceCodeSca
         }
 
         private boolean hasNoNullifyAnnotation(UAnnotated annotated) {
-            for (String annotation : NULLIFY_ANNOTATIONS) {
-                if (annotated.findAnnotation(annotation) != null) {
-                    return false;
-                }
+            for (UAnnotation annotation : mContext.getEvaluator().getAllAnnotations(annotated, false)) {
+                String name = annotation.getQualifiedName();
+                return !(name == null || name.endsWith("Nullable") || name.endsWith("NonNull") || name.endsWith("NotNull") || name.endsWith("Nonnull"));
             }
-
             return true;
         }
     }
