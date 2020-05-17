@@ -24,7 +24,7 @@ plugins {
     `java-library`
     `maven-publish`
     jacoco
-    kotlin("jvm") version "1.3.70"
+    kotlin("jvm") version "1.3.72"
     id("com.jfrog.bintray") version "1.8.4"
     id("com.github.ben-manes.versions") version "0.28.0"
 }
@@ -32,7 +32,7 @@ plugins {
 group = "com.cmgapps.android"
 version = "1.4.0"
 
-val lintVersion = "26.6.1"
+val lintVersion = "26.6.3"
 
 dependencies {
     compileOnly("com.android.tools.lint:lint-api:$lintVersion")
