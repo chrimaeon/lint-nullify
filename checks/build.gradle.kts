@@ -18,19 +18,19 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.jfrog.bintray.gradle.BintrayExtension
 import java.util.Date
-import java.util.Properties
 
 plugins {
     `java-library`
     `maven-publish`
     jacoco
     kotlin("jvm") version "1.3.72"
-    id("com.jfrog.bintray") version "1.8.4"
+    kotlin("kapt") version "1.3.72"
+    id("com.jfrog.bintray") version "1.8.5"
     id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 group = "com.cmgapps.android"
-version = "1.4.0"
+version = "1.5.0-SNAPSHOT"
 
 val lintVersion = "26.6.3"
 
@@ -39,10 +39,10 @@ dependencies {
     compileOnly("com.android.tools.lint:lint-checks:$lintVersion")
 
     // use annotationProcessor only once artifact is fixed
-    compileOnly("com.google.auto.service:auto-service:1.0-rc6")
-    annotationProcessor("com.google.auto.service:auto-service:1.0-rc6")
+    compileOnly("com.google.auto.service:auto-service:1.0-rc7")
+    kapt("com.google.auto.service:auto-service:1.0-rc7")
 
-    testImplementation(kotlin("stdlib-jdk7", "1.3.70"))
+    testImplementation(kotlin("stdlib-jdk7", "1.3.72"))
     testImplementation("junit:junit:4.13")
     testImplementation("com.android.tools.lint:lint:$lintVersion")
     testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
@@ -153,18 +153,12 @@ publishing {
 }
 
 bintray {
-    val credsFile = file("${project.rootDir}/credentials.properties")
-    if (credsFile.exists()) {
-        Properties().apply {
-            load(credsFile.inputStream())
-        }.let {
-            user = it.getProperty("user")
-            key = it.getProperty("key")
-        }
-    } else {
-        user = System.getenv("BINTRAY_USER")
-        key = System.getenv("BINTRAY_KEY")
-    }
+
+    val user by credentials()
+    val key by credentials()
+
+    this.user = user
+    this.key = key
 
     setPublications("bintray")
 
