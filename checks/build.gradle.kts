@@ -23,31 +23,30 @@ plugins {
     `java-library`
     `maven-publish`
     jacoco
-    kotlin("jvm") version "1.3.72"
-    kotlin("kapt") version "1.3.72"
-    id("com.jfrog.bintray") version "1.8.5"
-    id("com.github.ben-manes.versions") version "0.28.0"
+    kotlin("jvm") version Version.KOTLIN
+    kotlin("kapt") version Version.KOTLIN
+    id("com.jfrog.bintray") version Version.BINTRAY_PLUGIN
+    id("com.github.ben-manes.versions") version Version.VERSIONS_PLUGIN
+    id("com.cmgapps.gradle.ktlint")
 }
 
 group = "com.cmgapps.android"
-version = "1.5.0-SNAPSHOT"
-
-val lintVersion = "26.6.3"
+version = "1.4.0"
 
 dependencies {
-    compileOnly("com.android.tools.lint:lint-api:$lintVersion")
-    compileOnly("com.android.tools.lint:lint-checks:$lintVersion")
+    compileOnly(Deps.LINT_API)
+    compileOnly(Deps.LINT_CHECKS)
 
     // use annotationProcessor only once artifact is fixed
-    compileOnly("com.google.auto.service:auto-service:1.0-rc7")
-    kapt("com.google.auto.service:auto-service:1.0-rc7")
+    compileOnly(Deps.AUTO_SERVICE)
+    kapt(Deps.AUTO_SERVICE)
 
-    testImplementation(kotlin("stdlib-jdk7", "1.3.72"))
-    testImplementation("junit:junit:4.13")
-    testImplementation("com.android.tools.lint:lint:$lintVersion")
-    testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
-    testImplementation("com.android.tools:testutils:$lintVersion")
-    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation(kotlin("stdlib-jdk7", Version.KOTLIN))
+    testImplementation(Deps.JUNIT)
+    testImplementation(Deps.LINT)
+    testImplementation(Deps.LINT_TEST)
+    testImplementation(Deps.ANDROID_TESTUTILS)
+    testImplementation(Deps.HAMCREST)
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -98,6 +97,10 @@ tasks {
                 }
             }
         }
+    }
+
+    named("check") {
+        dependsOn("ktlint")
     }
 }
 

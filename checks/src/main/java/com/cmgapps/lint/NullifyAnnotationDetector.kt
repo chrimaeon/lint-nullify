@@ -14,6 +14,7 @@
  * limitations under the License.
  *
  */
+
 package com.cmgapps.lint
 
 import com.android.tools.lint.client.api.UElementHandler
