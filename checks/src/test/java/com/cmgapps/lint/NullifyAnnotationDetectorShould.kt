@@ -38,7 +38,7 @@ class NullifyAnnotationDetectorShould {
                     """
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect(
                 """
@@ -72,7 +72,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -91,7 +91,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect(
                 """
@@ -127,7 +127,7 @@ class NullifyAnnotationDetectorShould {
                         public Test() {myString = "just a string";}}"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -146,7 +146,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -163,7 +163,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect(
                 """
@@ -198,7 +198,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -215,7 +215,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -233,7 +233,7 @@ class NullifyAnnotationDetectorShould {
                     """
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect(
                 """
@@ -280,7 +280,7 @@ class NullifyAnnotationDetectorShould {
                         }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -298,7 +298,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect(
                 """
@@ -335,7 +335,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -352,7 +352,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect(
                 """
@@ -387,7 +387,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -404,7 +404,7 @@ class NullifyAnnotationDetectorShould {
                 }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -422,7 +422,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -440,7 +440,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -458,7 +458,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -476,7 +476,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }
@@ -493,7 +493,7 @@ class NullifyAnnotationDetectorShould {
                     }"""
                 ).indented()
             )
-            .issues(*NullifyAnnotationDetector.getIssues())
+            .issues(*NullifyAnnotationDetector.issues)
             .run()
             .expect("No warnings.")
     }

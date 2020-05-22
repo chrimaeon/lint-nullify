@@ -20,9 +20,10 @@ import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.google.auto.service.AutoService
 
+@Suppress("UnstableApiUsage")
 @AutoService(IssueRegistry::class)
 class NullifyIssueRegistry : IssueRegistry() {
-    override val issues = NullifyAnnotationDetector.getIssues().asList()
+    override val issues = NullifyAnnotationDetector.issues.asList()
     override val api = CURRENT_API
     override val minApi = 3
 }
