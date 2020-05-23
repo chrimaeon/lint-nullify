@@ -40,24 +40,19 @@ import org.jetbrains.uast.UParameter
 @Suppress("UnstableApiUsage")
 class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
 
-    override fun getApplicableUastTypes(): List<Class<out UElement>>? {
-        return listOf(UMethod::class.java, UField::class.java)
-    }
+    override fun getApplicableUastTypes(): List<Class<out UElement>>? = listOf(UMethod::class.java, UField::class.java)
 
-    override fun createUastHandler(context: JavaContext): UElementHandler? {
-        // using deprecated psi field here instead of sourcePsi because the IDE
-        // still uses older version of UAST
-        @Suppress("Deprecation")
-        return if (!isKotlin(context.uastFile?.psi)) {
-            NullifyAnnotationHandler(context)
-        } else null
-    }
+    @Suppress("Deprecation")
+    override fun createUastHandler(context: JavaContext): UElementHandler? = if (!isKotlin(context.uastFile?.psi)) {
+        NullifyAnnotationHandler(context)
+    } else null
 
-    class NullifyAnnotationHandler(private val context: JavaContext) : UElementHandler() {
+    private class NullifyAnnotationHandler(private val context: JavaContext) : UElementHandler() {
         override fun visitField(node: UField) {
-            if (isPrimitiveAndNotNull(node.type) || isEnumConstant(node) || isConstant(node) || isInitializedFinalField(
-                    node
-                )
+            if (isPrimitiveAndNotNull(node.type) ||
+                isEnumConstant(node) ||
+                isConstant(node) ||
+                isInitializedFinalField(node)
             ) return
 
             if (hasNoNullifyAnnotation(node)) {
@@ -112,47 +107,6 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
             }
         }
 
-        private fun isEnumConstant(field: UField): Boolean {
-            return field is UEnumConstant
-        }
-
-        private fun isConstant(field: UField): Boolean {
-            return field.isStatic && field.isFinal
-        }
-
-        private fun quickFixAnnotation(element: UElement): LintFix {
-            val sourceString = element.asSourceString()
-            val nonNullFixString = "@NonNull $sourceString"
-            val nullableFixString = "@Nullable $sourceString"
-
-            return LintFix.create().group()
-                .add(
-                    LintFix.create()
-                        .name("Annotate @NonNull")
-                        .replace()
-                        .text(sourceString)
-                        .shortenNames()
-                        .reformat(true)
-                        .with(nonNullFixString)
-                        .build()
-                )
-                .add(
-                    LintFix.create()
-                        .name("Annotate @Nullable")
-                        .replace()
-                        .text(sourceString)
-                        .shortenNames()
-                        .reformat(true)
-                        .with(nullableFixString)
-                        .build()
-                )
-                .build()
-        }
-
-        private fun isInitializedFinalField(field: UField): Boolean {
-            return field.isFinal && field.uastInitializer != null
-        }
-
         private fun hasNoNullifyAnnotation(annotated: UAnnotated): Boolean {
             for (annotation in context.evaluator.getAllAnnotations(annotated, false)) {
                 val name = annotation.qualifiedName
@@ -164,9 +118,50 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
             return true
         }
 
-        companion object {
+        private companion object {
             private const val MISSING_ANNOTATION = "Missing @NonNull or @Nullable"
             private const val MISSING_RETURN_ANNOTATION = "Return type is missing @NonNull or @Nullable"
+
+            private fun isEnumConstant(field: UField): Boolean {
+                return field is UEnumConstant
+            }
+
+            private fun isConstant(field: UField): Boolean {
+                return field.isStatic && field.isFinal
+            }
+
+            private fun isInitializedFinalField(field: UField): Boolean {
+                return field.isFinal && field.uastInitializer != null
+            }
+
+            private fun quickFixAnnotation(element: UElement): LintFix {
+                val sourceString = element.asSourceString()
+                val nonNullFixString = "@NonNull $sourceString"
+                val nullableFixString = "@Nullable $sourceString"
+
+                return LintFix.create().group()
+                    .add(
+                        LintFix.create()
+                            .name("Annotate @NonNull")
+                            .replace()
+                            .text(sourceString)
+                            .shortenNames()
+                            .reformat(true)
+                            .with(nonNullFixString)
+                            .build()
+                    )
+                    .add(
+                        LintFix.create()
+                            .name("Annotate @Nullable")
+                            .replace()
+                            .text(sourceString)
+                            .shortenNames()
+                            .reformat(true)
+                            .with(nullableFixString)
+                            .build()
+                    )
+                    .build()
+            }
         }
     }
 

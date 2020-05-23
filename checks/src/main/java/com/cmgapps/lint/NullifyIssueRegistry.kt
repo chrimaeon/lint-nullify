@@ -26,5 +26,4 @@ import com.google.auto.service.AutoService
 class NullifyIssueRegistry : IssueRegistry() {
     override val issues = NullifyAnnotationDetector.issues.asList()
     override val api = CURRENT_API
-    override val minApi = 3
 }
