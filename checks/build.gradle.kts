@@ -18,36 +18,35 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.jfrog.bintray.gradle.BintrayExtension
 import java.util.Date
-import java.util.Properties
 
 plugins {
     `java-library`
     `maven-publish`
     jacoco
-    kotlin("jvm") version "1.3.70"
-    id("com.jfrog.bintray") version "1.8.4"
-    id("com.github.ben-manes.versions") version "0.28.0"
+    kotlin("jvm") version Version.KOTLIN
+    kotlin("kapt") version Version.KOTLIN
+    id("com.jfrog.bintray") version Version.BINTRAY_PLUGIN
+    id("com.github.ben-manes.versions") version Version.VERSIONS_PLUGIN
+    id("com.cmgapps.gradle.ktlint")
 }
 
 group = "com.cmgapps.android"
-version = "1.4.0"
-
-val lintVersion = "26.6.1"
+version = "1.5.0"
 
 dependencies {
-    compileOnly("com.android.tools.lint:lint-api:$lintVersion")
-    compileOnly("com.android.tools.lint:lint-checks:$lintVersion")
+    compileOnly(Deps.LINT_API)
+    compileOnly(Deps.LINT_CHECKS)
 
     // use annotationProcessor only once artifact is fixed
-    compileOnly("com.google.auto.service:auto-service:1.0-rc6")
-    annotationProcessor("com.google.auto.service:auto-service:1.0-rc6")
+    compileOnly(Deps.AUTO_SERVICE)
+    kapt(Deps.AUTO_SERVICE)
 
-    testImplementation(kotlin("stdlib-jdk7", "1.3.70"))
-    testImplementation("junit:junit:4.13")
-    testImplementation("com.android.tools.lint:lint:$lintVersion")
-    testImplementation("com.android.tools.lint:lint-tests:$lintVersion")
-    testImplementation("com.android.tools:testutils:$lintVersion")
-    testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation(kotlin("stdlib-jdk7", Version.KOTLIN))
+    testImplementation(Deps.JUNIT)
+    testImplementation(Deps.LINT)
+    testImplementation(Deps.LINT_TEST)
+    testImplementation(Deps.ANDROID_TESTUTILS)
+    testImplementation(Deps.HAMCREST)
 }
 
 tasks.withType<DependencyUpdatesTask> {
@@ -98,6 +97,10 @@ tasks {
                 }
             }
         }
+    }
+
+    named("check") {
+        dependsOn("ktlint")
     }
 }
 
@@ -153,18 +156,12 @@ publishing {
 }
 
 bintray {
-    val credsFile = file("${project.rootDir}/credentials.properties")
-    if (credsFile.exists()) {
-        Properties().apply {
-            load(credsFile.inputStream())
-        }.let {
-            user = it.getProperty("user")
-            key = it.getProperty("key")
-        }
-    } else {
-        user = System.getenv("BINTRAY_USER")
-        key = System.getenv("BINTRAY_KEY")
-    }
+
+    val user by credentials()
+    val key by credentials()
+
+    this.user = user
+    this.key = key
 
     setPublications("bintray")
 
