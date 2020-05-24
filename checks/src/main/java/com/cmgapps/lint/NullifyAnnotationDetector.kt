@@ -107,16 +107,15 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
             }
         }
 
-        private fun hasNoNullifyAnnotation(annotated: UAnnotated): Boolean {
-            for (annotation in context.evaluator.getAllAnnotations(annotated, false)) {
-                val name = annotation.qualifiedName
-                return !(name == null ||
-                    name.endsWith("Nullable") ||
+        private fun hasNoNullifyAnnotation(annotated: UAnnotated): Boolean =
+            context.evaluator.getAllAnnotations(annotated, false).none { annotation ->
+                val name = annotation.qualifiedName ?: return@none false
+
+                name.endsWith("Nullable") ||
                     name.endsWith("NonNull") ||
-                    name.endsWith("NotNull") || name.endsWith("Nonnull"))
+                    name.endsWith("NotNull") ||
+                    name.endsWith("Nonnull")
             }
-            return true
-        }
 
         private companion object {
             private const val MISSING_ANNOTATION = "Missing @NonNull or @Nullable"

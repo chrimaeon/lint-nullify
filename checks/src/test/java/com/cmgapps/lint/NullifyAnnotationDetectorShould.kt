@@ -482,6 +482,25 @@ class NullifyAnnotationDetectorShould {
     }
 
     @Test
+    fun `annotation order`() {
+        lint()
+            .files(
+                java(
+                    """
+                    package test.pkg;
+                    public class Test {
+                        @javax.inject.Inject
+                        @javax.annotation.Nullable
+                        public String foo(){}
+                    }"""
+                ).indented()
+            )
+            .issues(*NullifyAnnotationDetector.issues)
+            .run()
+            .expect("No warnings.")
+    }
+
+    @Test
     fun `check kotlin`() {
         lint()
             .files(
