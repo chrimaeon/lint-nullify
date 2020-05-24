@@ -10,7 +10,7 @@ Check your code for missing @NonNull/@Nullable annotations.
 Add this to your dependencies in the modules `build.gradle`
 
     dependencies {
-        lintChecks 'com.cmgapps.android:checks:1.5.0'
+        lintChecks 'com.cmgapps.android:checks:1.5.1'
     }
 
 ## License
