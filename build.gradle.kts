@@ -37,6 +37,6 @@ tasks {
 
     wrapper {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.4.1"
+        gradleVersion = "6.5"
     }
 }

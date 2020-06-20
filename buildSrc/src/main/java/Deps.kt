@@ -36,6 +36,6 @@ object Version {
     internal const val AUTO_SERVICE = "1.0-rc7"
     internal const val HAMCREST = "2.2"
     internal const val JUNIT = "4.13"
-    internal const val KTLINT = "0.36.0"
-    internal const val LINT = "26.6.3"
+    internal const val KTLINT = "0.37.2"
+    internal const val LINT = "27.0.0"
 }

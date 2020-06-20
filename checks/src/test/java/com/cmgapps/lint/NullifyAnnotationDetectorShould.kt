@@ -45,7 +45,8 @@ class NullifyAnnotationDetectorShould {
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
                     public Test(int myInt, String myString){}
                                            ~~~~~~~~~~~~~~~
-                0 errors, 1 warnings""".trimIndent()
+                0 errors, 1 warnings"""
+                    .trimIndent()
             )
             .expectFixDiffs(
                 """
@@ -56,7 +57,8 @@ class NullifyAnnotationDetectorShould {
                 Fix for src/test/pkg/Test.java line 2: Annotate @Nullable:
                 @@ -3 +3
                 -     public Test(int myInt, String myString){}
-                +     public Test(int myInt, @Nullable String myString){}""".trimIndent()
+                +     public Test(int myInt, @Nullable String myString){}"""
+                    .trimIndent()
             )
     }
 
@@ -98,7 +100,8 @@ class NullifyAnnotationDetectorShould {
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyFieldAnnotation]
                     private String myString;
                     ~~~~~~~~~~~~~~~~~~~~~~~~
-                0 errors, 1 warnings""".trimIndent()
+                0 errors, 1 warnings"""
+                    .trimIndent()
             )
             .expectFixDiffs(
                 """
@@ -109,7 +112,8 @@ class NullifyAnnotationDetectorShould {
                 Fix for src/test/pkg/Test.java line 2: Annotate @Nullable:
                 @@ -3 +3
                 -     private String myString;
-                +     @Nullable private String myString;""".trimIndent()
+                +     @Nullable private String myString;"""
+                    .trimIndent()
             )
     }
 
@@ -170,7 +174,8 @@ class NullifyAnnotationDetectorShould {
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
                     public void foo(int myInt, String myString){}
                                                ~~~~~~~~~~~~~~~
-                0 errors, 1 warnings""".trimIndent()
+                0 errors, 1 warnings"""
+                    .trimIndent()
             )
             .expectFixDiffs(
                 """
@@ -305,7 +310,8 @@ class NullifyAnnotationDetectorShould {
                 src/test/pkg/Test.java:4: Warning: Return type is missing @NonNull or @Nullable [MissingNullifyMethodAnnotation]
                     public String foo(){}
                     ~~~~~~~~~~~~~~~~~~~~~
-                0 errors, 1 warnings""".trimIndent()
+                0 errors, 1 warnings"""
+                    .trimIndent()
             )
             .expectFixDiffs(
                 """
@@ -359,7 +365,8 @@ class NullifyAnnotationDetectorShould {
                 src/test/pkg/Test.java:3: Warning: Missing @NonNull or @Nullable [MissingNullifyFieldAnnotation]
                     public final Foo foo;
                     ~~~~~~~~~~~~~~~~~~~~~
-                0 errors, 1 warnings""".trimIndent()
+                0 errors, 1 warnings"""
+                    .trimIndent()
             )
             .expectFixDiffs(
                 """
