@@ -21,17 +21,18 @@ import java.util.Date
 
 plugins {
     `java-library`
-    `maven-publish`
-    jacoco
     kotlin("jvm") version Version.KOTLIN
     kotlin("kapt") version Version.KOTLIN
+    id("com.android.lint")
+    `maven-publish`
+    jacoco
     id("com.jfrog.bintray") version Version.BINTRAY_PLUGIN
     id("com.github.ben-manes.versions") version Version.VERSIONS_PLUGIN
     id("com.cmgapps.gradle.ktlint")
 }
 
 group = "com.cmgapps.android"
-version = "1.7.0"
+version = "1.7.1"
 
 dependencies {
     compileOnly(Deps.LINT_API)
