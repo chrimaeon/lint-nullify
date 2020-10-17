@@ -28,14 +28,14 @@ object Deps {
 
 object Version {
 
-    const val KOTLIN = "1.3.72"
+    const val KOTLIN = "1.4.10"
 
     const val BINTRAY_PLUGIN = "1.8.5"
-    const val VERSIONS_PLUGIN = "0.28.0"
+    const val VERSIONS_PLUGIN = "0.33.0"
 
     internal const val AUTO_SERVICE = "1.0-rc7"
     internal const val HAMCREST = "2.2"
-    internal const val JUNIT = "4.13"
-    internal const val KTLINT = "0.37.2"
-    internal const val LINT = "27.0.0"
+    internal const val JUNIT = "4.13.1"
+    internal const val KTLINT = "0.39.0"
+    internal const val LINT = "27.1.0"
 }
