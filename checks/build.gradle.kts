@@ -32,7 +32,7 @@ plugins {
 }
 
 group = "com.cmgapps.android"
-version = "1.7.0"
+version = "1.7.1"
 
 dependencies {
     compileOnly(Deps.LINT_API)
