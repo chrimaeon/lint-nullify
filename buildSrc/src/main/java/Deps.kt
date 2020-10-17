@@ -32,6 +32,7 @@ object Version {
 
     const val BINTRAY_PLUGIN = "1.8.5"
     const val VERSIONS_PLUGIN = "0.33.0"
+    const val ANDROID_GRADLE_PLUGIN = "4.1.0"
 
     internal const val AUTO_SERVICE = "1.0-rc7"
     internal const val HAMCREST = "2.2"

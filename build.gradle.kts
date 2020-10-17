@@ -15,6 +15,17 @@
  *
  */
 
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("com.android.tools.build:gradle:" + Version.ANDROID_GRADLE_PLUGIN)
+    }
+}
+
 allprojects {
     repositories {
         google()
