@@ -17,6 +17,7 @@
 object Deps {
     const val ANDROID_TESTUTILS = "com.android.tools:testutils:" + Version.LINT
     const val AUTO_SERVICE = "com.google.auto.service:auto-service:" + Version.AUTO_SERVICE
+    const val AUTO_SERVICE_ANNOTATIONS = "com.google.auto.service:auto-service-annotations:" + Version.AUTO_SERVICE
     const val HAMCREST = "org.hamcrest:hamcrest:" + Version.HAMCREST
     const val JUNIT = "junit:junit:" + Version.JUNIT
     const val KTLINT = "com.pinterest:ktlint:" + Version.KTLINT
@@ -28,15 +29,15 @@ object Deps {
 
 object Version {
 
-    const val KOTLIN = "1.4.10"
+    const val KOTLIN = "1.4.30"
 
-    const val BINTRAY_PLUGIN = "1.8.5"
-    const val VERSIONS_PLUGIN = "0.33.0"
+    const val VERSIONS_PLUGIN = "0.36.0"
     const val ANDROID_GRADLE_PLUGIN = "4.1.0"
+    const val DOKKA_PLUGIN = "1.4.20"
 
     internal const val AUTO_SERVICE = "1.0-rc7"
     internal const val HAMCREST = "2.2"
     internal const val JUNIT = "4.13.1"
-    internal const val KTLINT = "0.39.0"
-    internal const val LINT = "27.1.0"
+    internal const val KTLINT = "0.40.0"
+    internal const val LINT = "27.1.2"
 }
