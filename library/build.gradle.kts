@@ -35,7 +35,6 @@ android {
     buildFeatures {
         buildConfig = false
     }
-
 }
 
 val projectGroup: String by project
