@@ -16,4 +16,7 @@
  */
 
 rootProject.name = "lint-nullify"
-include(":checks")
+include(
+    ":checks",
+    ":library"
+)

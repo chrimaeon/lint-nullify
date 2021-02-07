@@ -49,7 +49,6 @@ fun Project.configureKtlint() {
         named("check") {
             dependsOn(ktlintTask)
         }
-
     }
 
     dependencies.add(ktlintConfiguration.name, Deps.KTLINT)

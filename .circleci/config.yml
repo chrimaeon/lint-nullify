@@ -3,7 +3,10 @@ version: 2.1
 executors:
   android-executor:
     docker:
-      - image: circleci/android:api-29
+      - image: circleci/android:api-30
+        auth:
+          username: chrimaeon
+          password: $DOCKERHUB_PASSWORD
     environment:
       JAVA_TOOL_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process -Dkotlin.incremental=false"
@@ -19,7 +22,7 @@ commands:
     description: "Restores Gradle Cache from cache"
     steps:
       - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}-{{ checksum "library/build.gradle.kts" }}
   save_gradle_wrapper:
     description: "Save Gradle Wrapper to cache"
     steps:
@@ -33,7 +36,7 @@ commands:
       - save_cache:
           paths:
             - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}-{{ checksum "library/build.gradle.kts" }}
 
 jobs:
   test:
@@ -67,13 +70,15 @@ jobs:
       - restore_gradle_cache
       - run:
           name: Deploy to Bintray
-          command: ./gradlew :checks:bintrayUpload
+          command: ./gradlew :library:publishLibraryMavenPublicationToSonatypeRepository
 
 workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - test
+      - test:
+          context:
+            - DockerHub
       - hold:
           type: approval
           requires:
@@ -82,6 +87,8 @@ workflows:
             branches:
               only: master
       - deploy:
+          context:
+            - DockerHub
           requires:
             - hold
           filters:

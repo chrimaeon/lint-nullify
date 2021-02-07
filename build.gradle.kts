@@ -15,9 +15,12 @@
  *
  */
 
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+
 buildscript {
     repositories {
         google()
+        mavenCentral()
         jcenter()
     }
 
@@ -25,6 +28,23 @@ buildscript {
         classpath("com.android.tools.build:gradle:" + Version.ANDROID_GRADLE_PLUGIN)
     }
 }
+
+plugins {
+    id("com.github.ben-manes.versions") version Version.VERSIONS_PLUGIN
+}
+
+tasks.withType<DependencyUpdatesTask> {
+    revision = "release"
+
+    rejectVersionIf {
+        listOf("alpha", "beta", "rc", "cr", "m").any { qualifier ->
+            """(?i).*[.-]$qualifier[.\d-]*""".toRegex()
+                .containsMatchIn(candidate.version)
+        }
+    }
+}
+
+
 
 allprojects {
     repositories {
@@ -34,10 +54,11 @@ allprojects {
     }
 
     gradle.projectsEvaluated {
-        tasks.withType<JavaCompile>()
-            .configureEach {
+        tasks {
+            withType<JavaCompile> {
                 options.compilerArgs.addAll(listOf("-Xlint:deprecation"))
             }
+        }
     }
 }
 
@@ -48,6 +69,6 @@ tasks {
 
     wrapper {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.7"
+        gradleVersion = "6.8.2"
     }
 }
