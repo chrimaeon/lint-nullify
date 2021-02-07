@@ -22,7 +22,7 @@ commands:
     description: "Restores Gradle Cache from cache"
     steps:
       - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}-{{ checksum "library/build.gradle.kts" }}
   save_gradle_wrapper:
     description: "Save Gradle Wrapper to cache"
     steps:
@@ -36,7 +36,7 @@ commands:
       - save_cache:
           paths:
             - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}
+          key: v1-gradle-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "checks/build.gradle.kts" }}-{{ checksum "library/build.gradle.kts" }}
 
 jobs:
   test:
