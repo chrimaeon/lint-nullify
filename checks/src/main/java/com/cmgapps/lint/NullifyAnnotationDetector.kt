@@ -40,7 +40,7 @@ import org.jetbrains.uast.UParameter
 @Suppress("UnstableApiUsage")
 class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
 
-    override fun getApplicableUastTypes(): List<Class<out UElement>>? = listOf(UMethod::class.java, UField::class.java)
+    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UMethod::class.java, UField::class.java)
 
     @Suppress("Deprecation")
     override fun createUastHandler(context: JavaContext): UElementHandler? = if (!isKotlin(context.uastFile?.psi)) {
