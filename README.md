@@ -10,7 +10,7 @@ Check your code for missing @NonNull/@Nullable annotations.
 Add this to your dependencies in the modules `build.gradle`
 
     dependencies {
-        implementation 'com.cmgapps.android:lint-nullify:1.7.1'
+        implementation 'com.cmgapps.android:lint-nullify:1.8.0'
     }
 
 ## License
