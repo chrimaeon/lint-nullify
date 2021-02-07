@@ -15,34 +15,32 @@
  *
  */
 
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import com.jfrog.bintray.gradle.BintrayExtension
 import java.util.Date
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    `java-library`
     kotlin("jvm") version Version.KOTLIN
     kotlin("kapt") version Version.KOTLIN
     id("com.android.lint")
-    `maven-publish`
     jacoco
-    id("com.jfrog.bintray") version Version.BINTRAY_PLUGIN
-    id("com.github.ben-manes.versions") version Version.VERSIONS_PLUGIN
     id("com.cmgapps.gradle.ktlint")
+    id("org.jetbrains.dokka") version Version.DOKKA_PLUGIN
 }
-
-group = "com.cmgapps.android"
-version = "1.7.1"
 
 dependencies {
     compileOnly(Deps.LINT_API)
     compileOnly(Deps.LINT_CHECKS)
 
-    // use annotationProcessor only once artifact is fixed
-    compileOnly(Deps.AUTO_SERVICE)
+    compileOnly(kotlin("stdlib-jdk8", Version.KOTLIN))
+    // Necessary to bump a transitive dependency.
+    compileOnly(kotlin("reflect", Version.KOTLIN))
+
+    compileOnly(Deps.AUTO_SERVICE_ANNOTATIONS)
     kapt(Deps.AUTO_SERVICE)
 
-    testImplementation(kotlin("stdlib-jdk7", Version.KOTLIN))
+    testImplementation(kotlin("stdlib-jdk8", Version.KOTLIN))
+    // Necessary to bump a transitive dependency.
+    testImplementation(kotlin("reflect", Version.KOTLIN))
     testImplementation(Deps.JUNIT)
     testImplementation(Deps.LINT)
     testImplementation(Deps.LINT_TEST)
@@ -50,30 +48,20 @@ dependencies {
     testImplementation(Deps.HAMCREST)
 }
 
-tasks.withType<DependencyUpdatesTask> {
-    revision = "release"
-
-    rejectVersionIf {
-        listOf("alpha", "beta", "rc", "cr", "m").any { qualifier ->
-            """(?i).*[.-]$qualifier[.\d-]*""".toRegex()
-                .containsMatchIn(candidate.version)
-        }
-    }
-}
-
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-val pomName = "Android Nullify Lint Checks"
+val pomName: String by project
+val projectVersion: String by project
 
 tasks {
     named<Jar>("jar") {
         manifest {
             attributes(
                 "Implementation-Title" to pomName,
-                "Implementation-Version" to project.version.toString(),
+                "Implementation-Version" to projectVersion,
                 "Built-By" to System.getProperty("user.name"),
                 "Built-Date" to Date(),
                 "Built-JDK" to System.getProperty("java.version"),
@@ -89,6 +77,10 @@ tasks {
         }
     }
 
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
     jacocoTestCoverageVerification {
         violationRules {
             rule {
@@ -99,85 +91,4 @@ tasks {
             }
         }
     }
-
-    named("check") {
-        dependsOn("ktlint")
-    }
 }
-
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets["main"].allSource)
-}
-
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks["javadoc"])
-}
-
-val scmUrl = "https://github.com/chrimaeon/lint-nullify"
-
-publishing {
-    publications {
-        create<MavenPublication>("bintray") {
-            from(components["java"])
-            artifact(sourcesJar.get())
-            artifact(javadocJar.get())
-            artifactId = "checks"
-            pom {
-
-                name.set(pomName)
-                description.set("Lint checks for @Nullable/@NonNull")
-                url.set(scmUrl)
-
-                licenses {
-                    license {
-                        name.set("The Apache Software License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                        distribution.set("repo")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("chrimaeon")
-                        name.set("Christian Grach")
-                        email.set("christian.grach@cmgapps.com")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git@github.com:chrimaeon/lint-nullify.git")
-                    developerConnection.set("scm:git:git@github.com:chrimaeon/lint-nullify.git")
-                    url.set(scmUrl)
-                }
-            }
-        }
-    }
-}
-
-bintray {
-
-    val user by credentials()
-    val key by credentials()
-
-    this.user = user
-    this.key = key
-
-    setPublications("bintray")
-
-    pkg(closureOf<BintrayExtension.PackageConfig> {
-        repo = "maven"
-        name = "${project.group}:checks"
-        userOrg = user
-        setLicenses("Apache-2.0")
-        vcsUrl = scmUrl
-        issueTrackerUrl = "https://github.com/chrimaeon/lint-nullify/issues"
-        version(closureOf<BintrayExtension.VersionConfig> {
-            name = project.version as String
-            vcsTag = project.version as String
-            released = Date().toString()
-        })
-    })
-}
-

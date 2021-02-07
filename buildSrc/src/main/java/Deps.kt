@@ -32,7 +32,7 @@ object Version {
     const val KOTLIN = "1.4.30"
 
     const val VERSIONS_PLUGIN = "0.36.0"
-    const val ANDROID_GRADLE_PLUGIN = "4.1.0"
+    const val ANDROID_GRADLE_PLUGIN = "4.1.2"
     const val DOKKA_PLUGIN = "1.4.20"
 
     internal const val AUTO_SERVICE = "1.0-rc7"
