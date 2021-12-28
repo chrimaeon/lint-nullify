@@ -21,15 +21,15 @@ plugins {
 }
 
 android {
-    compileSdkVersion(30)
+    compileSdk = 31
     defaultConfig {
-        minSdkVersion(15)
-        targetSdkVersion(30)
+        minSdk = 15
+        targetSdk = 31
     }
 
     compileOptions {
-        sourceCompatibility(JavaVersion.VERSION_1_8)
-        targetCompatibility(JavaVersion.VERSION_1_8)
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     buildFeatures {
@@ -44,19 +44,14 @@ version = projectVersion
 
 val scmUrl = "https://github.com/chrimaeon/lint-nullify"
 
-tasks {
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(projectDir.resolve("README.md"))
+}
 
-    val checksProject = project(":checks")
-
-    register<Jar>("sourcesJar") {
-        archiveClassifier.set("sources")
-        from(checksProject.sourceSets["main"].allSource)
-    }
-
-    register<Jar>("javadocJar") {
-        archiveClassifier.set("javadoc")
-        from(checksProject.tasks["dokkaJavadoc"])
-    }
+val javadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from(projectDir.resolve("README.md"))
 }
 
 afterEvaluate {
@@ -65,8 +60,8 @@ afterEvaluate {
             create<MavenPublication>("libraryMaven") {
                 from(components["release"])
 
-                artifact(tasks["sourcesJar"])
-                artifact(tasks["javadocJar"])
+                artifact(sourcesJar)
+                artifact(javadocJar)
 
                 val projectArtifactId: String by project
                 artifactId = projectArtifactId
@@ -79,7 +74,8 @@ afterEvaluate {
                     url.set(scmUrl)
 
                     issueManagement {
-                        url.set("https://github.com/chrimaeon/lint-nullify/issues")
+                        val feedbackUrl: String by project
+                        url.set(feedbackUrl)
                         system.set("github")
                     }
 
