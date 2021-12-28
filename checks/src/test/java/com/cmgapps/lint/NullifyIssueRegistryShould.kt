@@ -17,9 +17,9 @@ package com.cmgapps.lint
 
 import com.android.tools.lint.detector.api.CURRENT_API
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.Matchers.`is`
 import org.junit.Before
 import org.junit.Test
 

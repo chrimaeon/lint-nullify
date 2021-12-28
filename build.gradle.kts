@@ -21,7 +21,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
 
     dependencies {
@@ -44,12 +43,9 @@ tasks.withType<DependencyUpdatesTask> {
     }
 }
 
-
-
 allprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 
@@ -69,6 +65,6 @@ tasks {
 
     wrapper {
         distributionType = Wrapper.DistributionType.ALL
-        gradleVersion = "6.8.2"
+        gradleVersion = "7.3.3"
     }
 }
