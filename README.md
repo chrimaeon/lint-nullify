@@ -1,4 +1,4 @@
-# Android Lint for @NonNull/@Nullable annotation [![CircleCI](https://circleci.com/gh/chrimaeon/lint-nullify.svg?style=svg)](https://circleci.com/gh/chrimaeon/lint-nullify)
+# Android Lint for @NonNull/@Nullable annotation [![Build & Test](https://github.com/chrimaeon/lint-nullify/actions/workflows/main.yml/badge.svg)](https://github.com/chrimaeon/lint-nullify/actions/workflows/main.yml)
 
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 [![MavenCentral](https://img.shields.io/maven-central/v/com.cmgapps.android/lint-nullify?style=for-the-badge)](https://repo1.maven.org/maven2/com/cmgapps/android/lint-nullify)
