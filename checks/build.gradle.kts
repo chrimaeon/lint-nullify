@@ -15,6 +15,7 @@
  *
  */
 
+import kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Date
 import kotlin.io.path.ExperimentalPathApi
@@ -24,7 +25,7 @@ plugins {
     kotlin("jvm") version Version.KOTLIN
     kotlin("kapt") version Version.KOTLIN
     id("com.android.lint")
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version Version.KOVER_PLUGIN
     id("com.cmgapps.gradle.ktlint")
 }
 
@@ -97,13 +98,12 @@ tasks {
         dependsOn(generateBuildConfig)
     }
 
-    jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                limit {
-                    counter = "INSTRUCTION"
-                    minimum = "0.8".toBigDecimal()
-                }
+    koverVerify {
+        rule {
+            name = "Minimal line coverage rate in percent"
+            bound {
+                minValue = 80
+                valueType = COVERED_LINES_PERCENTAGE
             }
         }
     }
