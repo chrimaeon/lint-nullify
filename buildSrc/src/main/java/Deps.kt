@@ -33,7 +33,7 @@ object Version {
 
     const val VERSIONS_PLUGIN = "0.39.0"
     const val ANDROID_GRADLE_PLUGIN = "7.0.4"
-    const val DOKKA_PLUGIN = "1.4.20"
+    const val KOVER_PLUGIN = "0.4.4"
 
     internal const val AUTO_SERVICE = "1.0.1"
     internal const val HAMCREST = "2.2"

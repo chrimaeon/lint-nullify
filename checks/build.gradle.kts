@@ -15,16 +15,98 @@
  *
  */
 
-import java.util.Date
+import kotlinx.kover.api.VerificationValueType.COVERED_LINES_PERCENTAGE
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.Date
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.div
 
 plugins {
     kotlin("jvm") version Version.KOTLIN
     kotlin("kapt") version Version.KOTLIN
     id("com.android.lint")
-    jacoco
+    id("org.jetbrains.kotlinx.kover") version Version.KOVER_PLUGIN
     id("com.cmgapps.gradle.ktlint")
-    id("org.jetbrains.dokka") version Version.DOKKA_PLUGIN
+}
+
+@OptIn(ExperimentalPathApi::class)
+val buildConfigDirPath = buildDir.toPath() / "generated" / "source" / "buildConfig"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+    main {
+        java.srcDir(buildConfigDirPath)
+    }
+}
+
+val pomName: String by project
+val projectVersion: String by project
+
+tasks {
+    named<Jar>("jar") {
+        manifest {
+            attributes(
+                "Implementation-Title" to pomName,
+                "Implementation-Version" to projectVersion,
+                "Built-By" to System.getProperty("user.name"),
+                "Built-Date" to Date(),
+                "Built-JDK" to System.getProperty("java.version"),
+                "Built-Gradle" to gradle.gradleVersion,
+                "Lint-Registry-v2" to "com.cmgapps.lint.NullifyIssueRegistry"
+            )
+        }
+    }
+
+    val generateBuildConfig by registering {
+        val outputDir = buildConfigDirPath
+
+        val projectArtifactId: String by project
+        inputs.property("projectArtifactId", projectArtifactId)
+
+        val feedbackUrl: String by project
+        inputs.property("feedbackUrl", feedbackUrl)
+
+        outputs.dir(outputDir)
+
+        doLast {
+            outputDir.toFile().mkdirs()
+            val packageName = "com.cmgapps.lint"
+            file(outputDir.resolve("BuildConfig.kt")).bufferedWriter().use {
+                it.write(
+                    """
+                        |package $packageName
+                        |const val FEEDBACK_URL = "$feedbackUrl"
+                        |const val PROJECT_ARTIFACT = "$projectArtifactId"
+                    """.trimMargin()
+                )
+            }
+        }
+    }
+
+    withType<Test> {
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+        dependsOn(generateBuildConfig)
+    }
+
+    koverVerify {
+        rule {
+            name = "Minimal line coverage rate in percent"
+            bound {
+                minValue = 80
+                valueType = COVERED_LINES_PERCENTAGE
+            }
+        }
+    }
 }
 
 dependencies {
@@ -46,49 +128,4 @@ dependencies {
     testImplementation(Deps.LINT_TEST)
     testImplementation(Deps.ANDROID_TESTUTILS)
     testImplementation(Deps.HAMCREST)
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-val pomName: String by project
-val projectVersion: String by project
-
-tasks {
-    named<Jar>("jar") {
-        manifest {
-            attributes(
-                "Implementation-Title" to pomName,
-                "Implementation-Version" to projectVersion,
-                "Built-By" to System.getProperty("user.name"),
-                "Built-Date" to Date(),
-                "Built-JDK" to System.getProperty("java.version"),
-                "Built-Gradle" to gradle.gradleVersion,
-                "Lint-Registry-v2" to "com.cmgapps.lint.NullifyIssueRegistry"
-            )
-        }
-    }
-
-    withType<Test> {
-        testLogging {
-            events("passed", "skipped", "failed")
-        }
-    }
-
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-
-    jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                limit {
-                    counter = "INSTRUCTION"
-                    minimum = "0.8".toBigDecimal()
-                }
-            }
-        }
-    }
 }
