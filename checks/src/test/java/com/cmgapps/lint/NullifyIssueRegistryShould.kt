@@ -15,6 +15,7 @@
  */
 package com.cmgapps.lint
 
+import com.android.tools.lint.client.api.LintClient
 import com.android.tools.lint.detector.api.CURRENT_API
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -27,9 +28,11 @@ class NullifyIssueRegistryShould {
 
     private lateinit var registry: NullifyIssueRegistry
 
+    @Suppress("UnstableApiUsage")
     @Before
     @Throws(Exception::class)
     fun setUp() {
+        LintClient.clientName = LintClient.CLIENT_UNIT_TESTS
         registry = NullifyIssueRegistry()
     }
 

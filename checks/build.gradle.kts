@@ -70,11 +70,14 @@ tasks {
         val feedbackUrl: String by project
         inputs.property("feedbackUrl", feedbackUrl)
 
+        val packageName = "com.cmgapps.lint"
+        inputs.property("packageName", packageName)
+
         outputs.dir(outputDir)
 
         doLast {
             outputDir.toFile().mkdirs()
-            val packageName = "com.cmgapps.lint"
+
             file(outputDir.resolve("BuildConfig.kt")).bufferedWriter().use {
                 it.write(
                     """
