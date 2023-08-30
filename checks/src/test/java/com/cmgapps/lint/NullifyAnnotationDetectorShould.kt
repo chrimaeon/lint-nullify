@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2018. Christian Grach <christian.grach@cmgapps.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package com.cmgapps.lint
@@ -22,7 +11,6 @@ import com.android.tools.lint.checks.infrastructure.TestFiles.kotlin
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import org.junit.Test
 
-@Suppress("UnstableApiUsage")
 class NullifyAnnotationDetectorShould {
 
     @Test
@@ -35,8 +23,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         public Test(int myInt, String myString){}
                     }
-                    """
-                ).indented()
+                    """,
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -46,7 +34,7 @@ class NullifyAnnotationDetectorShould {
                     public Test(int myInt, String myString){}
                                            ~~~~~~~~~~~~~~~
                 0 errors, 1 warnings"""
-                    .trimIndent()
+                    .trimIndent(),
             )
             .expectFixDiffs(
                 """
@@ -58,7 +46,7 @@ class NullifyAnnotationDetectorShould {
                 @@ -3 +3
                 -     public Test(int myInt, String myString){}
                 +     public Test(int myInt, @Nullable String myString){}"""
-                    .trimIndent()
+                    .trimIndent(),
             )
     }
 
@@ -71,8 +59,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public Test(int myInt, @android.support.annotation.Nullable String myString){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -90,8 +78,8 @@ class NullifyAnnotationDetectorShould {
                         private String myString;
                         private int myInt;
                         private static final String constString = "Test";
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -101,7 +89,7 @@ class NullifyAnnotationDetectorShould {
                     private String myString;
                     ~~~~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings"""
-                    .trimIndent()
+                    .trimIndent(),
             )
             .expectFixDiffs(
                 """
@@ -113,7 +101,7 @@ class NullifyAnnotationDetectorShould {
                 @@ -3 +3
                 -     private String myString;
                 +     @Nullable private String myString;"""
-                    .trimIndent()
+                    .trimIndent(),
             )
     }
 
@@ -128,8 +116,8 @@ class NullifyAnnotationDetectorShould {
                         @android.support.annotation.NonNull private String myString;
                         private int myInt;
                         private static final String constString = "Test";
-                        public Test() {myString = "just a string";}}"""
-                ).indented()
+                        public Test() {myString = "just a string";}}""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -147,8 +135,8 @@ class NullifyAnnotationDetectorShould {
                         @androidx.annotation.Nullable private String myString;
                         private int myInt;
                         private static final String constString = "Test";
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -164,8 +152,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public void foo(int myInt, String myString){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -175,7 +163,7 @@ class NullifyAnnotationDetectorShould {
                     public void foo(int myInt, String myString){}
                                                ~~~~~~~~~~~~~~~
                 0 errors, 1 warnings"""
-                    .trimIndent()
+                    .trimIndent(),
             )
             .expectFixDiffs(
                 """
@@ -187,7 +175,7 @@ class NullifyAnnotationDetectorShould {
                 @@ -3 +3
                 -     public void foo(int myInt, String myString){}
                 +     public void foo(int myInt, @Nullable String myString){}
-                """.trimIndent()
+                """.trimIndent(),
             )
     }
 
@@ -200,8 +188,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public void foo(int myInt, @android.support.annotation.NonNull String myString){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -217,8 +205,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public void foo(int myInt, @androidx.annotation.NonNull String myString){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -235,8 +223,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         public void foo(int[] myInt, String[] myString){}
                     }
-                    """
-                ).indented()
+                    """,
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -249,7 +237,7 @@ class NullifyAnnotationDetectorShould {
                     public void foo(int[] myInt, String[] myString){}
                                                  ~~~~~~~~~~~~~~~~~
                 0 errors, 2 warnings
-                """.trimIndent()
+                """.trimIndent(),
             )
             .expectFixDiffs(
                 """
@@ -269,7 +257,7 @@ class NullifyAnnotationDetectorShould {
                 @@ -3 +3
                 -     public void foo(int[] myInt, String[] myString){}
                 +     public void foo(int[] myInt, @Nullable String[] myString){}
-                """.trimIndent()
+                """.trimIndent(),
             )
     }
 
@@ -282,8 +270,8 @@ class NullifyAnnotationDetectorShould {
                         package test.pkg;
                         public class Test {
                             public void foo(@android.support.annotation.Nullable int[] myInt, @android.support.annotation.Nullable String[] myString){}
-                        }"""
-                ).indented()
+                        }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -300,8 +288,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         public int foo(){}
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -311,7 +299,7 @@ class NullifyAnnotationDetectorShould {
                     public String foo(){}
                     ~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings"""
-                    .trimIndent()
+                    .trimIndent(),
             )
             .expectFixDiffs(
                 """
@@ -323,7 +311,7 @@ class NullifyAnnotationDetectorShould {
                 @@ -4 +4
                 -     public String foo(){}
                 +     @Nullable public String foo(){}
-                """.trimIndent()
+                """.trimIndent(),
             )
     }
 
@@ -338,8 +326,8 @@ class NullifyAnnotationDetectorShould {
                         public int foo(){}
                         @android.support.annotation.NonNull
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -355,8 +343,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public final Foo foo;
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -366,7 +354,7 @@ class NullifyAnnotationDetectorShould {
                     public final Foo foo;
                     ~~~~~~~~~~~~~~~~~~~~~
                 0 errors, 1 warnings"""
-                    .trimIndent()
+                    .trimIndent(),
             )
             .expectFixDiffs(
                 """
@@ -378,7 +366,7 @@ class NullifyAnnotationDetectorShould {
                 @@ -3 +3
                 -     public final Foo foo;
                 +     @Nullable public final Foo foo;
-                """.trimIndent()
+                """.trimIndent(),
             )
     }
 
@@ -391,8 +379,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg;
                     public class Test {
                         public final Foo foo = new Foo();
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -408,8 +396,8 @@ class NullifyAnnotationDetectorShould {
                 package test.pkg;
                 public @interface Test {
                    String value();
-                }"""
-                ).indented()
+                }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -426,8 +414,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         @org.jetbrains.annotations.NotNull
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -444,8 +432,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         @org.jetbrains.annotations.Nullable
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -462,8 +450,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         @javax.annotation.Nonnull
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -480,8 +468,8 @@ class NullifyAnnotationDetectorShould {
                     public class Test {
                         @javax.annotation.Nullable
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -499,8 +487,8 @@ class NullifyAnnotationDetectorShould {
                         @javax.inject.Inject
                         @javax.annotation.Nullable
                         public String foo(){}
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
@@ -516,8 +504,8 @@ class NullifyAnnotationDetectorShould {
                     package test.pkg
                     class Test(val prop: String) {
                         fun test(): String = ""
-                    }"""
-                ).indented()
+                    }""",
+                ).indented(),
             )
             .issues(*NullifyAnnotationDetector.issues)
             .run()
