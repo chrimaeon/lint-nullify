@@ -8,13 +8,13 @@ Check your code for missing @NonNull/@Nullable annotations.
 ## Usage
 
 Add this to your dependencies in the modules `build.gradle`
-
+```groovy
     dependencies {
-        implementation 'com.cmgapps.android:lint-nullify:1.9.0'
+        implementation("com.cmgapps.android:lint-nullify:2.0.0")
     }
-
+```
 ## License
-
+```text
     Copyright (c) 2018. Christian Grach <christian.grach@cmgapps.com>
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,3 +28,4 @@ Add this to your dependencies in the modules `build.gradle`
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+```

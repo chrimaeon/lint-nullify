@@ -1,20 +1,11 @@
 /*
  * Copyright (c) 2020. Christian Grach <christian.grach@cmgapps.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * SPDX-License-Identifier: Apache-2.0
  */
 package com.cmgapps.lint
 
+import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
 import com.android.tools.lint.detector.api.CURRENT_API
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -27,9 +18,11 @@ class NullifyIssueRegistryShould {
 
     private lateinit var registry: NullifyIssueRegistry
 
+    @Suppress("CheckResult")
     @Before
     @Throws(Exception::class)
     fun setUp() {
+        lint()
         registry = NullifyIssueRegistry()
     }
 
@@ -39,8 +32,8 @@ class NullifyIssueRegistryShould {
             registry.issues,
             containsInAnyOrder(
                 hasProperty("id", `is`("MissingNullifyMethodAnnotation")),
-                hasProperty("id", `is`("MissingNullifyFieldAnnotation"))
-            )
+                hasProperty("id", `is`("MissingNullifyFieldAnnotation")),
+            ),
         )
     }
 

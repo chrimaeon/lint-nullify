@@ -1,18 +1,7 @@
 /*
  * Copyright (c) 2018. Christian Grach <christian.grach@cmgapps.com>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package com.cmgapps.lint
@@ -37,15 +26,17 @@ import org.jetbrains.uast.UField
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 
-@Suppress("UnstableApiUsage")
 class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
 
-    override fun getApplicableUastTypes(): List<Class<out UElement>> = listOf(UMethod::class.java, UField::class.java)
+    override fun getApplicableUastTypes(): List<Class<out UElement>> =
+        listOf(UMethod::class.java, UField::class.java)
 
-    @Suppress("Deprecation")
-    override fun createUastHandler(context: JavaContext): UElementHandler? = if (!isKotlin(context.uastFile?.psi)) {
-        NullifyAnnotationHandler(context)
-    } else null
+    override fun createUastHandler(context: JavaContext): UElementHandler? =
+        if (!isKotlin(context.uastFile?.sourcePsi)) {
+            NullifyAnnotationHandler(context)
+        } else {
+            null
+        }
 
     private class NullifyAnnotationHandler(private val context: JavaContext) : UElementHandler() {
         override fun visitField(node: UField) {
@@ -53,7 +44,9 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
                 isEnumConstant(node) ||
                 isConstant(node) ||
                 isInitializedFinalField(node)
-            ) return
+            ) {
+                return
+            }
 
             if (hasNoNullifyAnnotation(node)) {
                 context.report(
@@ -61,7 +54,7 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
                     node,
                     context.getLocation(node),
                     MISSING_ANNOTATION,
-                    quickFixAnnotation(node)
+                    quickFixAnnotation(node),
                 )
             }
         }
@@ -88,7 +81,7 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
                     method as UElement,
                     context.getLocation(method),
                     MISSING_RETURN_ANNOTATION,
-                    quickFixAnnotation(method)
+                    quickFixAnnotation(method),
                 )
             }
         }
@@ -102,7 +95,7 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
                     parameter as UElement,
                     context.getLocation((parameter as UElement)),
                     MISSING_ANNOTATION,
-                    quickFixAnnotation(parameter)
+                    quickFixAnnotation(parameter),
                 )
             }
         }
@@ -119,7 +112,8 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
 
         private companion object {
             private const val MISSING_ANNOTATION = "Missing @NonNull or @Nullable"
-            private const val MISSING_RETURN_ANNOTATION = "Return type is missing @NonNull or @Nullable"
+            private const val MISSING_RETURN_ANNOTATION =
+                "Return type is missing @NonNull or @Nullable"
 
             private fun isEnumConstant(field: UField): Boolean {
                 return field is UEnumConstant
@@ -147,7 +141,7 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
                             .shortenNames()
                             .reformat(true)
                             .with(nonNullFixString)
-                            .build()
+                            .build(),
                     )
                     .add(
                         LintFix.create()
@@ -157,7 +151,7 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
                             .shortenNames()
                             .reformat(true)
                             .with(nullableFixString)
-                            .build()
+                            .build(),
                     )
                     .build()
             }
@@ -174,8 +168,8 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
             severity = Severity.WARNING,
             implementation = Implementation(
                 NullifyAnnotationDetector::class.java,
-                JAVA_FILE_SCOPE
-            )
+                JAVA_FILE_SCOPE,
+            ),
         )
         private val ISSUE_FIELD: Issue = Issue.create(
             id = "MissingNullifyFieldAnnotation",
@@ -186,8 +180,8 @@ class NullifyAnnotationDetector : Detector(), SourceCodeScanner {
             severity = Severity.WARNING,
             implementation = Implementation(
                 NullifyAnnotationDetector::class.java,
-                JAVA_FILE_SCOPE
-            )
+                JAVA_FILE_SCOPE,
+            ),
         )
 
         val issues = arrayOf(ISSUE_METHOD, ISSUE_FIELD)
